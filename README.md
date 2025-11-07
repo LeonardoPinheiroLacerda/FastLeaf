@@ -43,7 +43,7 @@ public class App {
 }
 ```
 
-A classe passada como argumento (neste caso, `App.class`) é fundamental. O framework a utiliza para determinar o pacote base (`base-package`) a partir do qual o escaneamento de componentes, como os seus `@Endpoint`s, será realizado. Apenas as classes dentro do pacote da classe `App` (que foi passada como argumento nesse exemplo) e seus subpacotes serão registradas.
+A classe passada como argumento (neste caso, `App.class`) é fundamental. O framework a utiliza para determinar o pacote base (`base-package`) a partir do qual o escaneamento de componentes, como os seus `@Endpoint`s, será realizado. Apenas as classes dentro do pacote da classe `App` e seus subpacotes serão registradas.
 
 # Configuração
 
@@ -95,6 +95,12 @@ Para customizações avançadas (ex: formatters, appenders), crie um arquivo `lo
 # Criando Endpoints
 
 Endpoints são o coração da sua API. Eles são classes que manipulam as requisições recebidas.
+
+## Recomendações para organização dos endpoints
+
+Crie pacotes em árvore para cada dominio da sua aplicação, como `com.mycompany.endpoints.users`, `com.mycompany.endpoints.products` e assim por diante.
+
+Cada endpoint é representado por uma classe separada, que deve ser criado no pacote correspondente. Assim promovendo uma melhor organização dos seus recursos.
 
 ### Estrutura Básica
 
