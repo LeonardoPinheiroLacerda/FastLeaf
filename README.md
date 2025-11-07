@@ -134,6 +134,8 @@ public class GetUsersEndpoint extends HttpEndpoint<Void, List<UserDTO>> {
 }
 ```
 
+> As classes DTO (classes que serão serializadas para JSON na resposta HTTP) devem conter getters e setters, para que dessa forma o framework possa serializar e deserializar os dados.
+
 ### Acessando Dados da Requisição
 
 O método `handle` recebe um objeto `HttpRequest` que contém todas as informações da requisição.
