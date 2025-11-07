@@ -104,7 +104,7 @@ Cada endpoint é representado por uma classe separada, que deve ser criado no pa
 
 ### Estrutura Básica
 
-1.  Crie uma classe que estenda `HttpEndpoint<I, O>`, onde `I` é o tipo do corpo da requisição (Request Body) e `O` é o tipo do corpo da resposta (Response Body). Se não houver corpo, utilize `Void`.
+1.  Crie uma classe que estenda `HttpEndpoint<I, O>`, onde `I` é o tipo do corpo da requisição (Request Body) e `O` é o tipo do corpo da resposta (Response Body). Se não houver corpo, utilize o tipo `Void`.
 2.  Anote a classe com `@Endpoint`, especificando a `uri` e o `method`.
 
 O corpo da requisição e da resposta será automaticamente (de)serializado de/para JSON.
@@ -118,17 +118,18 @@ public class UserDTO {
 }
 
 // Endpoint
-@Endpoint(uri = "/users", method = HttpMethod.GET)
+@Endpoint(url = "/users", method = HttpMethod.GET)
 public class GetUsersEndpoint extends HttpEndpoint<Void, List<UserDTO>> {
 
     @Override
     public HttpResponse<List<UserDTO>> handle(HttpRequest<Void> request) {
         // Lógica para buscar usuários
         List<UserDTO> users = List.of(new UserDTO("John Doe"));
-        return HttpResponse.builder()
-            .statusCode(HttpStatusCode.OK)
-            .body(users)
-            .build();
+        return HttpResponse
+                .<List<UserDTO>> builder()
+                .statusCode(HttpStatusCode.OK)
+                .body(users)
+                .build();
     }
 }
 ```
@@ -149,7 +150,8 @@ public class GetUserByIdEndpoint extends HttpEndpoint<Void, UserDTO> {
         final String userId = request.pathVariables().get("id");
         // Lógica para buscar o usuário
         UserDTO user = new UserDTO(userId);
-        return HttpResponse.builder()
+        return HttpResponse
+            .<UserDTO> builder()
             .statusCode(HttpStatusCode.OK)
             .body(user)
             .build();
@@ -167,7 +169,8 @@ public class SearchEndpoint extends HttpEndpoint<Void, String> {
     @Override
     public HttpResponse<String> handle(HttpRequest<Void> request) {
         final String query = request.queries().get("q");
-        return HttpResponse.builder()
+        return HttpResponse
+            .<String> builder()
             .statusCode(HttpStatusCode.OK)
             .body("Você buscou por: " + query)
             .build();
@@ -186,7 +189,8 @@ public class CreateUserEndpoint extends HttpEndpoint<CreateUserDTO, Void> {
     public HttpResponse<Void> handle(HttpRequest<CreateUserDTO> request) {
         CreateUserDTO userToCreate = request.body();
         System.out.println("Criando usuário: " + userToCreate.getName());
-        return HttpResponse.builder()
+        return HttpResponse
+            .<Void> builder()
             .statusCode(HttpStatusCode.CREATED)
             .build();
     }
@@ -203,7 +207,8 @@ public class EchoUserAgentEndpoint extends HttpEndpoint<Void, String> {
     @Override
     public HttpResponse<String> handle(HttpRequest<Void> request) {
         final String userAgent = request.headers().get("User-Agent");
-        return HttpResponse.builder()
+        return HttpResponse
+            .<String> builder()
             .statusCode(HttpStatusCode.OK)
             .body("User-Agent: " + userAgent)
             .build();
@@ -220,7 +225,7 @@ O builder permite configurar cada parte da resposta de forma fluente:
 - `.statusCode(HttpStatusCode)`: Define o código de status HTTP da resposta.
 - `.header(String, Object)`: Adiciona um cabeçalho à resposta. Pode ser chamado múltiplas vezes para adicionar vários cabeçalhos.
 - `.body(Object)`: Define o corpo da resposta. O objeto será serializado para JSON automaticamente.
-- `.build()`: Finaliza a construção e retorna o objeto `HttpResponse`.
+- `.build()`: Finaliza a construção e retorna o objeto `HttpResponse`. Este método é genérico e infere o tipo do corpo da resposta (`O`) a partir do tipo definido na assinatura do método `handle` do seu `HttpEndpoint`.
 
 **Exemplo Completo: Retornando um arquivo para download com cabeçalhos customizados.**
 ```java
@@ -230,7 +235,8 @@ public class DownloadReportEndpoint extends HttpEndpoint<Void, String> {
     public HttpResponse<String> handle(HttpRequest<Void> request) {
         String reportContent = "id,name\n1,John Doe";
 
-        return HttpResponse.builder()
+        return HttpResponse
+            .<String> builder()
             .statusCode(HttpStatusCode.OK)
             .header("Content-Type", "text/csv")
             .header("Content-Disposition", "attachment; filename=\"report.csv\"")
