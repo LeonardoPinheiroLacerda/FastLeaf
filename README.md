@@ -114,7 +114,21 @@ O corpo da requisição e da resposta será automaticamente (de)serializado de/p
 // DTO para a resposta
 public class UserDTO {
     private String name;
-    // getters e setters
+
+    public UserDTO() {
+    }
+
+    public UserDTO(String name) {
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
 }
 
 // Endpoint
@@ -134,7 +148,7 @@ public class GetUsersEndpoint extends HttpEndpoint<Void, List<UserDTO>> {
 }
 ```
 
-> As classes DTO (classes que serão serializadas para JSON na resposta HTTP) devem conter getters e setters, para que dessa forma o framework possa serializar e deserializar os dados.
+> As classes DTO (classes que serão serializadas para JSON na resposta HTTP) devem conter getters, setters e um construtor sem argumentos, para que dessa forma o framework possa serializar e deserializar os dados.
 
 ### Acessando Dados da Requisição
 
@@ -208,6 +222,26 @@ Para endpoints que recebem um corpo (ex: POST, PUT), defina o tipo genérico `I`
 
 **Exemplo:**
 ```java
+// DTO para o corpo da requisição
+public class CreateUserDTO {
+    private String name;
+
+    public CreateUserDTO() {
+    }
+
+    public CreateUserDTO(String name) {
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+}
+
 @Endpoint(url = "/users", method = HttpMethod.POST)
 public class CreateUserEndpoint extends HttpEndpoint<CreateUserDTO, Void> {
     @Override
