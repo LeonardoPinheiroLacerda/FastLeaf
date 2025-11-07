@@ -32,18 +32,18 @@ Para iniciar, adicione a dependência do framework ao seu `pom.xml`:
 </dependency>
 ```
 
-Em seguida, no método `main` da sua aplicação, chame o método estático `serve` da classe `Server`:
+Em seguida, no método `main` da sua aplicação, chame o método estático `serve` da classe `Server`, passando como argumento a classe que servirá como ponto de partida para a configuração da sua aplicação.
 
 ```java
 public class App {
     public static void main(String[] args) {
         // Inicia o servidor e bloqueia a thread principal
-        Server.serve();
+        Server.serve(App.class);
     }
 }
 ```
 
-Ao executar este método, o servidor será iniciado com as configurações padrão e sua aplicação estará pronta para receber requisições.
+A classe passada como argumento (neste caso, `App.class`) é fundamental. O framework a utiliza para determinar o pacote base (`base-package`) a partir do qual o escaneamento de componentes, como os seus `@Endpoint`s, será realizado. Apenas as classes dentro do pacote da classe `App` (que foi passada como argumento nesse exemplo) e seus subpacotes serão registradas.
 
 # Configuração
 
