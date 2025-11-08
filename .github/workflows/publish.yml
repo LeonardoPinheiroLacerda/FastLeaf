@@ -1,18 +1,50 @@
-name: Publish to Maven Central (Central Portal)
+name: Release and Publish
 
 on:
   push:
-    tags:
-      - 'v*' # Ex: v1.0.0 dispara publicação
+    branches:
+      - main
 
 jobs:
-  publish:
+  release:
+    name: Create Tag and Publish
     runs-on: ubuntu-latest
     environment: release
 
+    permissions:
+      contents: write
+      packages: write
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config user.name "LeonardoPinheiroLacerda"
+          git config user.email "leon.lacerda2015@gmail.com"
+
+      - name: Extract version from pom.xml
+        id: version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Versão encontrada no pom.xml: $VERSION"
+          TAG="v$VERSION"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git tag ${{ steps.version.outputs.tag }}
+          git push origin ${{ steps.version.outputs.tag }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Release ${{ steps.version.outputs.tag }}"
+          generate_release_notes: true
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -21,7 +53,7 @@ jobs:
           java-version: '21'
 
       - name: Build package
-        run: mvn clean package
+        run: mvn -B clean package
 
       - name: Publish to Maven Central
         uses: sonatype-nexus-community/actions/publish-central@v1
