@@ -8,7 +8,7 @@ public class PathVariableUriMatcher implements UriMatcher {
     private static final Pattern pathVariablePattern = Pattern.compile("^\\{(.*)}$");
 
     @Override
-    public boolean match(String inputUri, String resolverUri) {
+    public boolean match(String resolverUri, String inputUri) {
 
         final String[] inputUriParts = inputUri.split("/");
         final String[] resolverUriParts = resolverUri.split("/");
@@ -17,9 +17,9 @@ public class PathVariableUriMatcher implements UriMatcher {
             return false;
         }
 
-        for (int i = 0; i < inputUriParts.length; i++) {
-            final String endpointPart = inputUriParts[i];
-            final String requestPart = resolverUriParts[i];
+        for (int i = 0; i < resolverUriParts.length; i++) {
+            final String endpointPart = resolverUriParts[i];
+            final String requestPart = inputUriParts[i];
 
             final Matcher matcher = pathVariablePattern.matcher(endpointPart);
             if (!matcher.find() && !endpointPart.equals(requestPart)) {
