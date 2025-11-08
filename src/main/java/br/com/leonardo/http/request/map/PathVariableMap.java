@@ -1,36 +1,26 @@
 package br.com.leonardo.http.request.map;
 
-import br.com.leonardo.exception.HttpException;
-import br.com.leonardo.http.HttpStatusCode;
-
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public record PathVariableMap(Map<String, String> map) {
 
     public String getString(String name) {
         final String value = map.get(name);
         if (value == null) {
-            throw new HttpException("Path variable '" + name + "' not found", HttpStatusCode.BAD_REQUEST, null);
+            throw new NoSuchElementException("Required path variable '" + name + "' is missing.");
         }
         return value;
     }
 
-    public Integer getInteger(String name) {
+    public Integer getInteger(String name) throws NumberFormatException {
         final String value = getString(name);
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            throw new HttpException("Path variable '" + name + "' is not a valid integer", HttpStatusCode.BAD_REQUEST, null);
-        }
+        return Integer.parseInt(value);
     }
 
-    public Long getLong(String name) {
+    public Long getLong(String name) throws NumberFormatException {
         final String value = getString(name);
-        try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException e) {
-            throw new HttpException("Path variable '" + name + "' is not a valid long", HttpStatusCode.BAD_REQUEST, null);
-        }
+        return Long.parseLong(value);
     }
 
     public Boolean getBoolean(String name) {
@@ -38,10 +28,10 @@ public record PathVariableMap(Map<String, String> map) {
         if ("true".equalsIgnoreCase(value)) {
             return true;
         }
-        else if ("false".equalsIgnoreCase(value)) {
+        if ("false".equalsIgnoreCase(value)) {
             return false;
         }
-        throw new HttpException("Path variable '" + name + "' is not a valid boolean", HttpStatusCode.BAD_REQUEST, null);
+        throw new IllegalArgumentException("Path variable '" + name + "' is not a valid boolean. Received: " + value);
     }
 
     public Boolean exists(String name) {
