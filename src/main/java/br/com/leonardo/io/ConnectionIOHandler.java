@@ -1,5 +1,6 @@
 package br.com.leonardo.io;
 
+import br.com.leonardo.http.context.HttpEndpointContext;
 import br.com.leonardo.io.input.HttpRequestReader;
 import br.com.leonardo.io.output.HttpWriter;
 import br.com.leonardo.io.output.factory.HttpWriterFactory;
@@ -20,7 +21,10 @@ import java.net.Socket;
 import java.util.Set;
 
 @Slf4j
-public record ConnectionIOHandler(Socket clientConnection) implements Runnable {
+public record ConnectionIOHandler(
+        Socket clientConnection,
+        HttpEndpointContext context
+) implements Runnable {
 
     @Override
     public void run() {
@@ -58,7 +62,7 @@ public record ConnectionIOHandler(Socket clientConnection) implements Runnable {
         final Set<HttpHeader> headers = requestData.headers();
         final byte[] body = requestData.body();
 
-        final HttpWriter httpWriter = HttpWriterFactory.create(requestLine);
+        final HttpWriter httpWriter = HttpWriterFactory.create(requestLine, context);
 
         try {
             final HttpResponse<?> response = httpWriter

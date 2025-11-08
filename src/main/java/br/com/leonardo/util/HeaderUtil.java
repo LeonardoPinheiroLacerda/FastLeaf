@@ -1,7 +1,7 @@
 package br.com.leonardo.util;
 
 import br.com.leonardo.http.HttpHeader;
-import br.com.leonardo.http.request.HeaderMap;
+import br.com.leonardo.http.request.map.HeaderMap;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -7,22 +7,20 @@ import br.com.leonardo.http.context.HttpEndpointContext;
 import br.com.leonardo.http.middleware.Middleware;
 import br.com.leonardo.observability.nodetree.Node;
 import br.com.leonardo.observability.nodetree.TreeNodeLogger;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
-public class EndpointScanner {
+public record EndpointScanner(
+        HttpEndpointContext context
+) {
 
-    private EndpointScanner() {
-    }
-
-    public static void scan(Class<?> clazz) {
+    public void scan(Class<?> clazz) {
         final String pack = clazz.getPackage().getName();
         final Reflections reflections = new Reflections(pack);
-
-        HttpEndpointContext context = HttpEndpointContext.getInstance();
 
         log.info("Scanning project");
         final Node root = new Node("Scanning package " + pack);
@@ -34,7 +32,7 @@ public class EndpointScanner {
 
 
                     final Node endpointNode = new Node(endpoint.getName());
-                    final Node uriNode =    new Node("URL:        " + annotation.url());
+                    final Node uriNode = new Node("URL:        " + annotation.url());
                     final Node methodNode = new Node("Method:     " + annotation.method().name());
                     endpointNode.addChild(uriNode);
                     endpointNode.addChild(methodNode);

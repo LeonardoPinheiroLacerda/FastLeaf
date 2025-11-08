@@ -4,10 +4,10 @@ import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.HttpMethod;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.middleware.Middleware;
-import br.com.leonardo.http.request.HeaderMap;
+import br.com.leonardo.http.request.map.HeaderMap;
 import br.com.leonardo.http.request.HttpRequest;
-import br.com.leonardo.http.request.PathVariableMap;
-import br.com.leonardo.http.request.QueryParameterMap;
+import br.com.leonardo.http.request.map.PathVariableMap;
+import br.com.leonardo.http.request.map.QueryParameterMap;
 import br.com.leonardo.http.response.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter

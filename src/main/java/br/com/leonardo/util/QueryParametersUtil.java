@@ -1,7 +1,7 @@
 package br.com.leonardo.util;
 
 import br.com.leonardo.http.RequestLine;
-import br.com.leonardo.http.request.QueryParameterMap;
+import br.com.leonardo.http.request.map.QueryParameterMap;
 
 import java.util.HashMap;
 import java.util.Map;

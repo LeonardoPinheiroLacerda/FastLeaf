@@ -1,5 +1,6 @@
 package br.com.leonardo.io.output.factory;
 
+import br.com.leonardo.http.context.HttpEndpointContext;
 import br.com.leonardo.io.output.ApiHttpResponseWriter;
 import br.com.leonardo.io.output.HttpWriter;
 import br.com.leonardo.io.output.StaticHttpResponseWriter;
@@ -11,10 +12,10 @@ public class HttpWriterFactory {
 
     private HttpWriterFactory() {}
 
-    public static HttpWriter create(RequestLine requestLine) {
+    public static HttpWriter create(RequestLine requestLine, HttpEndpointContext context) {
         return ContentNegotiationUtil.existsStatic(requestLine.uri()) && ApplicationProperties.staticContentEnabled()
                 ? new StaticHttpResponseWriter()
-                : new ApiHttpResponseWriter();
+                : new ApiHttpResponseWriter(context);
     }
 
 }

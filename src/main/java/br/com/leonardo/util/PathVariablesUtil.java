@@ -4,7 +4,7 @@ import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.HttpStatusCode;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.context.HttpEndpoint;
-import br.com.leonardo.http.request.PathVariableMap;
+import br.com.leonardo.http.request.map.PathVariableMap;
 
 import java.util.HashMap;
 import java.util.Map;

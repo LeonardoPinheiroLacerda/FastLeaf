@@ -7,9 +7,9 @@ import br.com.leonardo.http.HttpStatusCode;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.context.HttpEndpointContext;
 import br.com.leonardo.http.context.HttpEndpoint;
-import br.com.leonardo.http.request.HeaderMap;
-import br.com.leonardo.http.request.PathVariableMap;
-import br.com.leonardo.http.request.QueryParameterMap;
+import br.com.leonardo.http.request.map.HeaderMap;
+import br.com.leonardo.http.request.map.PathVariableMap;
+import br.com.leonardo.http.request.map.QueryParameterMap;
 import br.com.leonardo.http.response.HttpResponse;
 import br.com.leonardo.util.ContentNegotiationUtil;
 import br.com.leonardo.util.HeaderUtil;
@@ -21,15 +21,16 @@ import java.io.IOException;
 import java.util.Set;
 
 @Slf4j
-public class ApiHttpResponseWriter implements HttpWriter {
+public record ApiHttpResponseWriter (
+        HttpEndpointContext context
+) implements HttpWriter {
 
     @Override
     public HttpResponse<?> generateResponse(RequestLine requestLine, Set<HttpHeader> headers, byte[] body) throws HttpException {
 
-        final HttpEndpoint<?, ?> endpointHandler = HttpEndpointContext
-                .getInstance()
-                .get(requestLine)
-                .orElse(null);
+        //TODO: remover essa lógica daqui
+        final HttpEndpoint<?, ?> endpointHandler = context.get(requestLine)
+                                                          .orElse(null);
 
         if (endpointHandler == null) {
             log.error("No endpoint handler found for request: {}", requestLine);

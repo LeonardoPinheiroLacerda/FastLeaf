@@ -1,4 +1,4 @@
-package br.com.leonardo.http.request;
+package br.com.leonardo.http.request.map;
 
 import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.HttpStatusCode;

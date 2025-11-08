@@ -10,16 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HttpEndpointContext {
 
-    private static final HttpEndpointContext INSTANCE = new HttpEndpointContext();
-
-    private HttpEndpointContext() {
-    }
-
-    public static HttpEndpointContext getInstance() {
-        return INSTANCE;
-    }
-
-    private final static Map<HttpMethod, Set<HttpEndpoint<?, ?>>> endpointMap = new ConcurrentHashMap<>();
+    private final Map<HttpMethod, Set<HttpEndpoint<?, ?>>> endpointMap = new ConcurrentHashMap<>();
 
     public HttpEndpointContext add(HttpEndpoint<?, ?> endpoint) {
         endpointMap
