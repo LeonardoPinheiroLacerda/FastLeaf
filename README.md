@@ -349,7 +349,7 @@ public class GetUsersEndpoint extends HttpEndpoint<Void, String> {
 
 # Servindo Arquivos Estáticos
 
-O framework pode servir arquivos estáticos (HTML, CSS, JS, imagens).
+O framework pode servir diversos tipos de arquivos estáticos, como HTML, CSS, JS, imagens (PNG, JPG, GIF), vídeos (MP4, WebM), fontes (TTF, OTF, WOFF) e outros.
 
 1.  Certifique-se de que a propriedade `http.server.static.content.enabled` está como `true` (padrão).
 2.  Crie uma pasta dentro de `src/main/resources`. O nome padrão é `static`, mas pode ser alterado pela propriedade `http.server.static.content.path`.
