@@ -2,12 +2,11 @@ package br.com.leonardo.annotation.scanner;
 
 import br.com.leonardo.annotation.Endpoint;
 import br.com.leonardo.exception.ServerInitializationException;
-import br.com.leonardo.http.context.HttpEndpoint;
-import br.com.leonardo.http.context.HttpEndpointContext;
+import br.com.leonardo.router.context.HttpEndpoint;
+import br.com.leonardo.router.context.HttpEndpointContext;
 import br.com.leonardo.http.middleware.Middleware;
 import br.com.leonardo.observability.nodetree.Node;
 import br.com.leonardo.observability.nodetree.TreeNodeLogger;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 

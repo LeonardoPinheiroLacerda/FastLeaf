@@ -1,6 +1,6 @@
 package br.com.leonardo.io.output.factory;
 
-import br.com.leonardo.http.context.HttpEndpointContext;
+import br.com.leonardo.router.context.HttpEndpointContext;
 import br.com.leonardo.io.output.ApiHttpResponseWriter;
 import br.com.leonardo.io.output.HttpWriter;
 import br.com.leonardo.io.output.StaticHttpResponseWriter;

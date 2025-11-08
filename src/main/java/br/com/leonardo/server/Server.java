@@ -1,7 +1,6 @@
 package br.com.leonardo.server;
 
-import br.com.leonardo.annotation.scanner.EndpointScanner;
-import br.com.leonardo.http.context.HttpEndpointContext;
+import br.com.leonardo.router.context.HttpEndpointContext;
 import br.com.leonardo.io.ConnectionIOHandler;
 import br.com.leonardo.config.ApplicationProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +19,13 @@ public class Server implements AutoCloseable {
     private final ServerSocket serverSocket;
     private final ExecutorService executorService;
     private final HttpEndpointContext context;
+
     private volatile boolean isRunning = true;
 
-    public Server() throws IOException {
+    public Server(HttpEndpointContext context) throws IOException {
         this.serverSocket = new ServerSocket(ApplicationProperties.getPort());
         this.executorService = Executors.newVirtualThreadPerTaskExecutor();
-        this.context = new HttpEndpointContext();
+        this.context = context;
 
     }
 

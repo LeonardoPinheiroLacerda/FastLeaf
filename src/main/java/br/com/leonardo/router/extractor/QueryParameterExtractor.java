@@ -1,4 +1,4 @@
-package br.com.leonardo.util;
+package br.com.leonardo.router.extractor;
 
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.request.map.QueryParameterMap;
@@ -6,11 +6,10 @@ import br.com.leonardo.http.request.map.QueryParameterMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QueryParametersUtil {
-
-    private QueryParametersUtil() {}
+public class QueryParameterExtractor {
 
     public static QueryParameterMap extract(RequestLine requestLine) {
+
         final String url = requestLine.uri();
         final String[] chunks = url.split("\\?");
 
@@ -36,8 +35,4 @@ public class QueryParametersUtil {
         return new QueryParameterMap(queryParameters);
     }
 
-    public static boolean match(String incomingUri, String templateUri) {
-        final String[] endpointUriParts = templateUri.split("\\?");
-        return endpointUriParts[0].equals(incomingUri);
-    }
 }

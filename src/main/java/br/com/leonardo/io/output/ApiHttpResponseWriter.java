@@ -5,16 +5,16 @@ import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.HttpHeader;
 import br.com.leonardo.http.HttpStatusCode;
 import br.com.leonardo.http.RequestLine;
-import br.com.leonardo.http.context.HttpEndpointContext;
-import br.com.leonardo.http.context.HttpEndpoint;
+import br.com.leonardo.router.context.HttpEndpointContext;
+import br.com.leonardo.router.context.HttpEndpoint;
 import br.com.leonardo.http.request.map.HeaderMap;
 import br.com.leonardo.http.request.map.PathVariableMap;
 import br.com.leonardo.http.request.map.QueryParameterMap;
 import br.com.leonardo.http.response.HttpResponse;
+import br.com.leonardo.router.extractor.HeaderExtractor;
+import br.com.leonardo.router.extractor.PathVariableExtractor;
+import br.com.leonardo.router.extractor.QueryParameterExtractor;
 import br.com.leonardo.util.ContentNegotiationUtil;
-import br.com.leonardo.util.HeaderUtil;
-import br.com.leonardo.util.PathVariablesUtil;
-import br.com.leonardo.util.QueryParametersUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -46,9 +46,9 @@ public record ApiHttpResponseWriter (
             );
         }
 
-        PathVariableMap pathVariableMap = PathVariablesUtil.extract(requestLine, endpointHandler);
-        QueryParameterMap queryParameterMap = QueryParametersUtil.extract(requestLine);
-        HeaderMap headerMap = HeaderUtil.extract(headers);
+        PathVariableMap pathVariableMap     = PathVariableExtractor.extract(requestLine, endpointHandler);
+        QueryParameterMap queryParameterMap = QueryParameterExtractor.extract(requestLine);
+        HeaderMap headerMap                 = HeaderExtractor.extract(headers);
 
         endpointHandler
                 .runMiddlewares(requestLine, headerMap, body, pathVariableMap, queryParameterMap);

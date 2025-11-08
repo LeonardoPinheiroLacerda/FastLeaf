@@ -1,7 +1,7 @@
 package br.com.leonardo.server;
 
 import br.com.leonardo.annotation.scanner.EndpointScanner;
-import br.com.leonardo.http.context.HttpEndpointContext;
+import br.com.leonardo.router.context.HttpEndpointContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class ServerRunner {
         EndpointScanner scanner = new EndpointScanner(context);
         scanner.scan(clazz);
 
-        try (Server server = new Server()){
+        try (Server server = new Server(context)){
             server.start();
         } catch (IOException e) {
             log.error("Failed to start server", e);
