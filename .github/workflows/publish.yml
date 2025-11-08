@@ -58,6 +58,7 @@ jobs:
       - name: Publish to Maven Central
         run: |
           mvn -B deploy -DskipTests \
-            -Dcentral.username=${{ secrets.CENTRAL_USERNAME }} \
+#          -Dcentral.username=${{ secrets.CENTRAL_USERNAME }} \
+            -Dcentral.username=teste123aimds \
             -Dcentral.token=${{ secrets.CENTRAL_TOKEN }} \
             -Dcentral.publisher.serverId=central
