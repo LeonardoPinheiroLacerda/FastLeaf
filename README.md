@@ -112,7 +112,7 @@ Para iniciar, adicione a dependência do framework ao seu `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>br.com.leonardo</groupId>
+    <groupId>io.github.LeonardoPinheiroLacerda</groupId>
     <artifactId>SimpleHttpServer</artifactId>
     <version>1.0.0</version>
 </dependency>
