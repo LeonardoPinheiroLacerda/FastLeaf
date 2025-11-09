@@ -65,9 +65,18 @@ jobs:
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           gpgconf --kill gpg-agent
           gpgconf --launch gpg-agent
-
-      - name: Build and publish
-        run: mvn -B clean deploy -DskipTests -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+          
+      - name: Build and publish (safe GPG passphrase)
+        run: |
+          # Salva passphrase num arquivo temporário seguro
+          echo "${{ secrets.GPG_PASSPHRASE }}" > pass.txt
+          chmod 600 pass.txt
+      
+          # Usa o arquivo como fonte da senha
+          mvn -B clean deploy -DskipTests -Dgpg.passphrase="$(cat pass.txt)"
+      
+          # Remove após o uso
+          shred -u pass.txt
 
       - name: Set up Git
         run: |
