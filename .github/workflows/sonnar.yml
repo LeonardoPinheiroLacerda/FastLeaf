@@ -1,0 +1,47 @@
+name: SonarCloud Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  sonnar:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    environment: sonar
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: Run SonarCloud Scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # necessário para PR decoration
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # token do SonarCloud
+        run: |
+          mvn -B clean verify sonar:sonar \
+           -Dsonar.projectKey=leonardopinheirolacerda \
+           -Dsonar.organization=LeonardoLacerdaOrg \
+           -Dsonar.host.url=https://sonarcloud.io
+              
+
+
