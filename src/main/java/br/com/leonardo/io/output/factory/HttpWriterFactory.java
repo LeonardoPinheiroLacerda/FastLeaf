@@ -6,14 +6,17 @@ import br.com.leonardo.io.output.HttpWriter;
 import br.com.leonardo.io.output.StaticHttpResponseWriter;
 import br.com.leonardo.config.ApplicationProperties;
 import br.com.leonardo.http.RequestLine;
-import br.com.leonardo.util.ContentNegotiationUtil;
+import br.com.leonardo.io.output.util.ContentTypeNegotiation;
 
 public class HttpWriterFactory {
 
     private HttpWriterFactory() {}
 
     public static HttpWriter create(RequestLine requestLine, HttpEndpointResolver resolver) {
-        return ContentNegotiationUtil.existsStatic(requestLine.uri()) && ApplicationProperties.staticContentEnabled()
+
+        ContentTypeNegotiation contentTypeNegotiation = new ContentTypeNegotiation();
+
+        return contentTypeNegotiation.existsStatic(requestLine.uri()) && ApplicationProperties.staticContentEnabled()
                 ? new StaticHttpResponseWriter()
                 : new ApiHttpResponseWriter(resolver);
     }
