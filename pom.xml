@@ -19,6 +19,7 @@
 
         <lombok.version>1.18.42</lombok.version>
         <mockito.version>5.20.0</mockito.version>
+        <jacoco.version>0.8.14</jacoco.version>
 
         <java.version>21</java.version>
 
@@ -94,6 +95,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.27.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
         </dependency>
     </dependencies>
 
@@ -229,6 +236,8 @@
             <id>coverage</id>
             <build>
                 <plugins>
+
+                    <!-- JaCoCo -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
@@ -239,6 +248,9 @@
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
+                                <configuration>
+                                    <propertyName>jacocoArgLine</propertyName>
+                                </configuration>
                             </execution>
                             <execution>
                                 <id>report</id>
@@ -253,6 +265,20 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+
+                    <!-- Surefire -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <argLine>
+                                ${jacocoArgLine}
+                                -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                            </argLine>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
