@@ -50,9 +50,20 @@ jobs:
             -Dsonar.projectKey=LeonardoPinheiroLacerda_SimpleHttpServer \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
+      - name: Find Sonar report-task.txt
+        id: sonarfile
+        run: |
+          FILE=$(find . -name report-task.txt | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "❌ report-task.txt not found"
+            exit 1
+          fi
+          echo "Found Sonar report file at: $FILE"
+          echo "path=$FILE" >> $GITHUB_OUTPUT
+
       - name: SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
         with:
-          scanMetadataReportFile: .scannerwork/report-task.txt
+          scanMetadataReportFile: ${{ steps.sonarfile.outputs.path }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
