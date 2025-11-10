@@ -46,7 +46,7 @@ jobs:
           mvn -B verify sonar:sonar \
             -Pcoverage \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=LeonardoPinheiroLacerda \
+            -Dsonar.organization=leonardopinheirolacerda \
             -Dsonar.projectKey=LeonardoPinheiroLacerda_FastLeaf
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
