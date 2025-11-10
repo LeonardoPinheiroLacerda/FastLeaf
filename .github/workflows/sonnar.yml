@@ -46,8 +46,8 @@ jobs:
           mvn -B verify sonar:sonar \
             -Pcoverage \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=leonardopinheirolacerda \
-            -Dsonar.projectKey=LeonardoPinheiroLacerda_SimpleHttpServer \
+            -Dsonar.organization=LeonardoPinheiroLacerda \
+            -Dsonar.projectKey=LeonardoPinheiroLacerda_FastLeaf
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
       - name: Find Sonar report-task.txt
