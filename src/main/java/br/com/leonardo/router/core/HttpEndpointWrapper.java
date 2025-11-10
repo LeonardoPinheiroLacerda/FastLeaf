@@ -31,17 +31,26 @@ public record HttpEndpointWrapper<I, O> (
 
     public HttpResponse<O> createResponse() throws IOException {
         try {
-            if (endpoint.resolveInputType().equals(Void.class)) {
+
+            I castedBody = switch (endpoint.resolveInputType().getTypeName()) {
+                case "java.lang.Void" -> null;
+                case "java.lang.String" -> (I) new String(body);
+
+                default -> {
+                    final ObjectMapper mapper = new ObjectMapper();
+                    yield mapper.readValue(body, mapper.constructType(endpoint.resolveInputType()));
+                }
+            };
+
+            if (castedBody == null) {
                 return endpoint.handle(request);
             }
-
-            final ObjectMapper mapper = new ObjectMapper();
-            I castedBody = mapper.readValue(body, mapper.constructType(endpoint.resolveInputType()));
 
             return endpoint
                     .handle(
                             request.withBody(castedBody)
                     );
+
         } catch (NumberFormatException e) {
             throw new HttpException("Invalid number format " + e.getMessage(), HttpStatusCode.INTERNAL_SERVER_ERROR, request.uri(), e);
         } catch (NoSuchElementException e) {
