@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.leonardopinheirolacerda</groupId>
-    <artifactId>SimpleHttpServer</artifactId>
+    <artifactId>fastleaf</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>HttpServer</name>
+    <name>FastLeaf</name>
     <url>http://maven.apache.org</url>
-    <description>This project is an implementation of an HTTP Server using only vanilla Java</description>
+    <description>A lightweight and fast Java framework for building simple HTTP servers and APIs with minimal configuration.</description>
 
     <properties>
         <sonar.organization>leonardopinheirolacerda</sonar.organization>
