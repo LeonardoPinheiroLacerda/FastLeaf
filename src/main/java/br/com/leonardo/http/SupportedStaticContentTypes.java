@@ -32,6 +32,9 @@ public enum SupportedStaticContentTypes {
     private final String mediaType;
 
     public static String getMediaType(String extension) {
+        if (extension == null) {
+            return null;
+        }
         return Arrays
                 .stream(values())
                 .filter(type -> extension.equalsIgnoreCase(type.extension))
