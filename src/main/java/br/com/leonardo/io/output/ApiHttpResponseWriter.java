@@ -10,11 +10,9 @@ import br.com.leonardo.router.core.HttpEndpointResolver;
 import br.com.leonardo.http.response.HttpResponse;
 import br.com.leonardo.router.core.HttpEndpointWrapper;
 import br.com.leonardo.router.core.HttpEndpointWrapperFactory;
-import br.com.leonardo.util.ContentNegotiationUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -51,10 +49,10 @@ public record ApiHttpResponseWriter (
     public byte[] getBody(RequestLine requestLine,
                           Set<HttpHeader> headers,
                           HttpResponse<?> response) throws IOException {
-        final HttpHeader acceptHeader = ContentNegotiationUtil.resolveSupportedAcceptHeader(headers);
+        final HttpHeader acceptHeader = contentTypeNegotiation.resolveSupportedAcceptHeader(headers);
 
-        byte[] bodyBytes = ContentNegotiationUtil.serializePlainBody(response.getBody(), acceptHeader);
-        ContentNegotiationUtil.setContentTypeAndContentLength(acceptHeader, bodyBytes, response);
+        byte[] bodyBytes = contentTypeNegotiation.serializePlainBody(response.getBody(), acceptHeader);
+        contentTypeNegotiation.setContentTypeAndContentLength(acceptHeader, bodyBytes, response);
 
         return bodyBytes;
     }

@@ -4,11 +4,13 @@ import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.exception.HttpMiddlewareException;
 import br.com.leonardo.http.HttpStatusCode;
 import br.com.leonardo.http.request.HttpRequest;
+import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class Middleware {
 
-    @Setter
     private Middleware next;
 
     public abstract void run(HttpRequest<?> request) throws HttpMiddlewareException;

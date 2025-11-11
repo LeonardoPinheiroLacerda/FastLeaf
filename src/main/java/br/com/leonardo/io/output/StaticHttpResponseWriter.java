@@ -5,7 +5,6 @@ import br.com.leonardo.http.HttpStatusCode;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.response.HttpResponse;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
-import br.com.leonardo.util.ContentNegotiationUtil;
 
 import java.io.IOException;
 import java.util.Set;
@@ -26,8 +25,8 @@ public class StaticHttpResponseWriter implements HttpWriter {
     public byte[] getBody(RequestLine requestLine,
                           Set<HttpHeader> headers,
                           HttpResponse<?> response) throws IOException {
-        byte[] bodyBytes = ContentNegotiationUtil.serializeStaticBody(requestLine.uri());
-        ContentNegotiationUtil.setContentTypeAndContentLengthForStaticResources(bodyBytes, requestLine.uri(), response);
+        byte[] bodyBytes = contentTypeNegotiation.serializeStaticBody(requestLine.uri());
+        contentTypeNegotiation.setContentTypeAndContentLengthForStaticResources(bodyBytes, requestLine.uri(), response);
 
         return bodyBytes;
     }

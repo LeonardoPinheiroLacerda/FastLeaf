@@ -21,7 +21,6 @@ public class HttpEndpointWrapperFactory {
         final Set<HttpHeader> headers = requestData.headers();
         final byte[] body = requestData.body();
 
-
         final PathVariableMap pathMap = PathVariableExtractor.extract(requestLine, httpEndpoint);
         final QueryParameterMap queryMap = QueryParameterExtractor.extract(requestLine);
         final HeaderMap headerMap = HeaderExtractor.extract(headers);

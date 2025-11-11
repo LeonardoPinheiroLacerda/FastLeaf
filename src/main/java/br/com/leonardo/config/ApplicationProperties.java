@@ -8,6 +8,8 @@ import java.util.Properties;
 @Slf4j
 public class ApplicationProperties {
 
+    private ApplicationProperties() {}
+
     private static final String PROPERTIES_FILE = "http-server.properties";
     private static final Properties properties = new Properties();
 
@@ -48,23 +50,18 @@ public class ApplicationProperties {
         return defaultValue;
     }
 
-
     public static int getPort() {
         return getInt("http.server.port", 9000);
     }
-
     public static boolean shouldLogRequests() {
         return getBoolean("http.server.log.detailed-request", false);
     }
-
     public static boolean shouldLogResponses() {
         return getBoolean("http.server.log.detailed-response", false);
     }
-
     public static boolean staticContentEnabled() {
         return getBoolean("http.server.static.content.enabled", true);
     }
-
     public static String getStaticContentPath() {
         return getString("http.server.static.content.path", "static");
     }

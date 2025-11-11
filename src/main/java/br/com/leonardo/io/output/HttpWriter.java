@@ -4,8 +4,8 @@ import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.HttpHeader;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.response.HttpResponse;
+import br.com.leonardo.io.output.util.ContentTypeNegotiation;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
-import br.com.leonardo.util.ContentNegotiationUtil;
 import br.com.leonardo.observability.TraceIdLifeCycleHandler;
 
 import java.io.IOException;
@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.util.Set;
 
 public interface HttpWriter {
+
+    ContentTypeNegotiation contentTypeNegotiation = new ContentTypeNegotiation();
 
     default String writeResponse(OutputStream outputStream,
                                  HttpResponse<?> response,
@@ -89,14 +91,14 @@ public interface HttpWriter {
     default byte[] getErrorBody(RequestLine requestLine,
                                 Set<HttpHeader> headers,
                                 HttpException exception) throws IOException {
-        final HttpHeader acceptHeader = ContentNegotiationUtil.resolveSupportedAcceptHeader(headers);
+        final HttpHeader acceptHeader = contentTypeNegotiation.resolveSupportedAcceptHeader(headers);
 
         final HttpResponse<Object> response = HttpResponse.builder()
                 .statusCode(exception.getStatusCode())
                 .build();
 
-        byte[] bodyBytes = ContentNegotiationUtil.serializePlainBody(exception.responseBody(), acceptHeader);
-        ContentNegotiationUtil.setContentTypeAndContentLength(acceptHeader, bodyBytes, response);
+        byte[] bodyBytes = contentTypeNegotiation.serializePlainBody(exception.responseBody(), acceptHeader);
+        contentTypeNegotiation.setContentTypeAndContentLength(acceptHeader, bodyBytes, response);
 
         return bodyBytes;
     }

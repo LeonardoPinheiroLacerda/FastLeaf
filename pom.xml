@@ -3,13 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.leonardopinheirolacerda</groupId>
-    <artifactId>SimpleHttpServer</artifactId>
+    <artifactId>fastleaf</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>HttpServer</name>
+    <name>FastLeaf</name>
     <url>http://maven.apache.org</url>
-    <description>This project is an implementation of an HTTP Server using only vanilla Java</description>
+    <description>A lightweight and fast Java framework for building simple HTTP servers and APIs with minimal configuration.</description>
+
+    <organization>
+        <name>Leonardo Pinheiro Lacerda</name>
+        <url>https://raw.githubusercontent.com/LeonardoPinheiroLacerda/FastLeaf/refs/heads/main/docs/icon.png</url>
+    </organization>
 
     <properties>
         <sonar.organization>leonardopinheirolacerda</sonar.organization>
@@ -17,8 +22,11 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>21</java.version>
         <lombok.version>1.18.42</lombok.version>
+        <mockito.version>5.20.0</mockito.version>
+        <jacoco.version>0.8.14</jacoco.version>
+
+        <java.version>21</java.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -75,9 +83,23 @@
         </dependency>
 
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.13.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.20.0</version>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -86,10 +108,27 @@
             <artifactId>assertj-core</artifactId>
             <version>3.27.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                    </argLine>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -209,19 +248,25 @@
             <id>coverage</id>
             <build>
                 <plugins>
+
+                    <!-- JaCoCo -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.7</version>
+                        <version>0.8.14</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
+                                <configuration>
+                                    <propertyName>jacocoArgLine</propertyName>
+                                </configuration>
                             </execution>
                             <execution>
                                 <id>report</id>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
@@ -232,6 +277,20 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+
+                    <!-- Surefire -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <argLine>
+                                ${jacocoArgLine}
+                                -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                            </argLine>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
