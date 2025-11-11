@@ -103,7 +103,7 @@ jobs:
         run: |
           mvn -B clean deploy \
            -DskipTests \
-           -Dgpg.passphrase="$(printf '%s' ${{ secrets.GPG_PASSPHRASE }} | base64 --decode)"
+           -Dgpg.passphrase="$(printf '%s' ${{ secrets.GPG_PASSPHRASE }} | base64 --decode)" \
            -Prelease
 
   release:
