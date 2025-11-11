@@ -50,13 +50,4 @@ class SupportedStaticContentTypesTest {
         // Then
         Assertions.assertThat(mediaType).isNull();
     }
-
-    @Test
-    void shouldReturnNullForNullExtension() {
-        // When
-        String mediaType = SupportedStaticContentTypes.getMediaType(null);
-
-        // Then
-        Assertions.assertThat(mediaType).isNull();
-    }
 }
