@@ -41,8 +41,8 @@ public interface HttpWriter {
             response = HttpResponse
                     .builder()
                     //Deve acompanhar o Accept header
-                    .header("Content-Type", "application/json")
-                    .header("Content-Length", bodyBytes.length)
+                    .header(br.com.leonardo.enums.HttpHeader.CONTENT_TYPE.getName(), br.com.leonardo.enums.ContentType.APPLICATION_JSON.getType())
+                    .header(br.com.leonardo.enums.HttpHeader.CONTENT_LENGTH.getName(), bodyBytes.length)
                     .statusCode(exception.getStatusCode())
                     .build();
 

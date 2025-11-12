@@ -1,6 +1,7 @@
 package br.com.leonardo.router.extractor;
 
-import br.com.leonardo.http.HttpHeader;
+import br.com.leonardo.enums.ContentType;
+import br.com.leonardo.enums.HttpHeader;
 import br.com.leonardo.http.request.map.HeaderMap;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Sets;
@@ -14,9 +15,9 @@ class HeaderExtractorTest {
     @Test
     void shouldExtractHeaders() {
         //Given
-        Set<HttpHeader> headers = Sets.set(
-                new HttpHeader("Content-Type", "application/json"),
-                new HttpHeader("Accept", "application/json")
+        Set<br.com.leonardo.http.HttpHeader> headers = Sets.set(
+                new br.com.leonardo.http.HttpHeader(HttpHeader.CONTENT_TYPE.getName(), ContentType.APPLICATION_JSON.getType()),
+                new br.com.leonardo.http.HttpHeader(HttpHeader.ACCEPT.getName(), ContentType.APPLICATION_JSON.getType())
         );
 
         //When
@@ -26,11 +27,11 @@ class HeaderExtractorTest {
         Assertions
                 .assertThat(extract)
                 .extracting(
-                        h -> h.getString("Content-Type").orElse(null),
-                        h -> h.getString("Accept").orElse(null),
-                        h -> h.getString("Authorization").orElse(null)
+                        h -> h.getString(HttpHeader.CONTENT_TYPE.getName()).orElse(null),
+                        h -> h.getString(HttpHeader.ACCEPT.getName()).orElse(null),
+                        h -> h.getString(HttpHeader.AUTHORIZATION.getName()).orElse(null)
                 )
-                .containsExactly("application/json", "application/json", null);
+                .containsExactly(ContentType.APPLICATION_JSON.getType(), ContentType.APPLICATION_JSON.getType(), null);
     }
 
 }
