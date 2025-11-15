@@ -1,9 +1,9 @@
 package br.com.leonardo.router.core;
 
 import br.com.leonardo.exception.HttpException;
-import br.com.leonardo.router.core.middleware.Middleware;
 import br.com.leonardo.http.request.HttpRequest;
 import br.com.leonardo.http.response.HttpResponse;
+import br.com.leonardo.router.core.middleware.Middleware;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

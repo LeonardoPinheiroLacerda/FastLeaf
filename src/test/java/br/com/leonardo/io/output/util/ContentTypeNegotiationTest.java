@@ -1,8 +1,8 @@
 
 package br.com.leonardo.io.output.util;
 
-import br.com.leonardo.http.HttpHeader;
 import br.com.leonardo.enums.HttpStatusCode;
+import br.com.leonardo.http.HttpHeader;
 import br.com.leonardo.http.response.HttpResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.assertj.core.api.Assertions;

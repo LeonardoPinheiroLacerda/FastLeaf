@@ -65,8 +65,7 @@ class HttpRequestTest {
         originalRequest.addMiddlewareProperty(key, value);
 
         // Then
-        assertThat(originalRequest.middlewareProperties()).containsKey(key);
-        assertThat(originalRequest.middlewareProperties().get(key)).isEqualTo(value);
+        assertThat(originalRequest.middlewareProperties()).containsEntry(key, value);
     }
 
     @Test

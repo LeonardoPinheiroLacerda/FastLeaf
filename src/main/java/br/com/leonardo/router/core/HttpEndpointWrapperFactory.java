@@ -12,7 +12,6 @@ import br.com.leonardo.router.extractor.PathVariableExtractor;
 import br.com.leonardo.router.extractor.QueryParameterExtractor;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 public class HttpEndpointWrapperFactory {

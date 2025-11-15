@@ -1,8 +1,6 @@
 package br.com.leonardo.router.core.middleware;
 
-import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.exception.HttpMiddlewareException;
-import br.com.leonardo.enums.HttpStatusCode;
 import br.com.leonardo.http.request.HttpRequest;
 import lombok.Getter;
 import lombok.Setter;

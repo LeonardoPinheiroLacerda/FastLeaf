@@ -1,8 +1,8 @@
 package br.com.leonardo.io;
 
 import br.com.leonardo.config.ApplicationProperties;
-import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.enums.HttpStatusCode;
+import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.io.input.HttpRequestReader;
 import br.com.leonardo.io.output.ApiHttpResponseWriter;
