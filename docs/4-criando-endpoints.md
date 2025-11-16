@@ -258,3 +258,12 @@ public class DownloadReportEndpoint extends HttpEndpoint<Void, String> {
 ```bash
 curl -v http://localhost:8080/download-report
 ```
+
+### Log de Inicialização da Aplicação
+
+Ao iniciar a aplicação, o `EndpointScanner` varre o classpath em busca de todos os endpoints anotados com `@Endpoint`. O resultado desse processo é exibido no log do console em um formato de árvore, fornecendo uma visão clara de todas as rotas registradas, seus métodos HTTP, URIs e os tipos de entrada e saída esperados.
+
+A imagem abaixo (`logtree.png`) é um exemplo de como o log de inicialização da sua aplicação se parecerá, caso você tenha implementado todos os endpoints descritos nesta documentação:
+
+![Exemplo de Log de Inicialização com Endpoints Descobertos](./logtree.png)
+
