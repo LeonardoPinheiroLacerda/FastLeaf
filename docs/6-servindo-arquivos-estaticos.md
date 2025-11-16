@@ -65,7 +65,7 @@ Coloque qualquer arquivo de imagem chamado `logo.png` dentro da pasta `src/main/
 
 **5. Acessando no Navegador**
 
-Após iniciar seu servidor, acesse `http://localhost:9000/index.html`. O navegador irá carregar o HTML, que por sua vez fará requisições para `/css/style.css` e `/img/logo.png`, e o FastLeaf servirá todos os três arquivos.
+Após iniciar seu servidor, acesse `http://localhost:8080/index.html`. O navegador irá carregar o HTML, que por sua vez fará requisições para `/css/style.css` e `/img/logo.png`, e o FastLeaf servirá todos os três arquivos.
 
 ### Regra de Precedência: Arquivos Estáticos vs. Endpoints de API
 

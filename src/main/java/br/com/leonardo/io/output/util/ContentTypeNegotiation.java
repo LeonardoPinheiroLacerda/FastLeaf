@@ -49,7 +49,9 @@ public class ContentTypeNegotiation {
     public void setContentTypeAndContentLengthForStaticResources(byte[] body, String uri, HttpResponse<?> response) {
         final String[] chunks = uri.split("\\.");
         final String extension = chunks[chunks.length - 1];
-        response.addHeader(HttpHeaderEnum.CONTENT_TYPE.getName(), SupportedStaticContentTypes.getMediaType(extension));
+        if(SupportedStaticContentTypes.getMediaType(extension) != null) {
+            response.addHeader(HttpHeaderEnum.CONTENT_TYPE.getName(), SupportedStaticContentTypes.getMediaType(extension));
+        }
         response.addHeader(HttpHeaderEnum.CONTENT_LENGTH.getName(), body.length);
     }
 
