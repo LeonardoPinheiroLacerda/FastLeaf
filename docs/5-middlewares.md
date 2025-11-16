@@ -1,6 +1,6 @@
 # Middlewares
 
-Middlewares são componentes poderosos que interceptam requisições HTTP antes que elas cheguem ao `HttpEndpoint`. Eles permitem executar lógicas transversais, como autenticação, logging, compressão e manipulação de headers, de forma modular e reutilizável.
+Middlewares são componentes poderosos que interceptam requisições HTTP antes que elas cheguem ao `HttpEndpoint`. Eles permitem executar lógicas transversais, como autenticação, logging e compressão, de forma modular e reutilizável.
 
 Para criar um middleware, estenda a classe abstrata `Middleware` e implemente o método `run`. A responsabilidade de invocar o próximo middleware na cadeia recai sobre o desenvolvedor, que deve chamar `super.next(request)`. Se `super.next(request)` não for chamado, a cadeia de execução será interrompida e o endpoint final será executado. Caso não haja um próximo middleware, a chamada a `super.next(request)` não terá efeito.
 
@@ -54,7 +54,7 @@ public class AuthenticationMiddleware extends Middleware {
 
         if (token == null || !token.equals("Bearer valid-token")) {
             // Lança uma exceção para interromper o fluxo e retornar um erro 401
-            throw new HttpMiddlewareException(HttpStatusCode.UNAUTHORIZED, "Token inválido ou ausente.");
+            throw new HttpMiddlewareException("Token inválido ou ausente.", HttpStatusCode.UNAUTHORIZED, request.uri());
         }
 
         // Token válido, extrai o ID do usuário (simulado) e o adiciona à requisição
@@ -93,4 +93,18 @@ public class GetProfileEndpoint extends HttpEndpoint<Void, String> {
                 .build();
     }
 }
+```
+
+### Testando o Endpoint com Middlewares
+
+Para testar o `GetProfileEndpoint` que implementa os middlewares de logging e autenticação, você pode usar os seguintes comandos `curl`:
+
+Teste com token
+```bash
+curl -v -H "Authorization: Bearer valid-token" http://localhost:8080/profile
+```
+
+Teste sem token
+```bash
+curl -v http://localhost:8080/profile
 ```

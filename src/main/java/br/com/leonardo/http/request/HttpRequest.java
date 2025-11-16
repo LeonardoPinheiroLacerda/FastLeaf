@@ -1,5 +1,6 @@
 package br.com.leonardo.http.request;
 
+import br.com.leonardo.enums.HttpMethod;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.request.map.HeaderMap;
 import br.com.leonardo.http.request.map.PathVariableMap;
@@ -17,6 +18,10 @@ public record HttpRequest<I>(
 ) {
     public String uri() {
         return requestLine.uri().split("\\?")[0];
+    }
+
+    public HttpMethod method() {
+        return requestLine.method();
     }
 
     public void addMiddlewareProperty(String key, Object value) {
