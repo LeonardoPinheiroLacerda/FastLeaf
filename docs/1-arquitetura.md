@@ -40,66 +40,81 @@ Uma requisição HTTP passa pelas seguintes camadas principais até gerar uma re
 
 ### Descrição dos Pacotes
 
-A seguir, a função de cada pacote principal e suas classes mais importantes.
+A arquitetura da aplicação é organizada na seguinte estrutura de pacotes e classes:
 
-*   #### `br.com.leonardo.server`
-    *   **Função:** Ponto de entrada e gerenciamento do ciclo de vida do servidor.
-    *   **`ServerRunner`**: Classe principal que o usuário invoca. É responsável por escanear os endpoints e iniciar o `Server`.
-    *   **`Server`**: Gerencia o `ServerSocket` e o pool de threads (`VirtualThreadPerTaskExecutor`). Aceita as conexões TCP e despacha cada uma para um `ConnectionIOHandler`.
-
-*   #### `br.com.leonardo.io`
-    *   **Função:** Camada de Entrada/Saída (I/O), responsável pela comunicação de baixo nível com o cliente.
-    *   **`ConnectionIOHandler`**: Gerencia o ciclo de vida de uma única conexão. Usa `HttpWriterFactory` para obter o `HttpWriter` correto e orquestra o fluxo de geração e escrita da resposta. Em caso de erro, utiliza `ConnectionErrorHandler`.
-    *   **`HttpWriterFactory`**: Classe de fábrica (em `output.factory`) que decide qual `HttpWriter` (`ApiHttpResponseWriter` ou `StaticHttpResponseWriter`) usar com base na URI da requisição.
-    *   **`ApiHttpResponseWriter`**: Implementação de `HttpWriter` para endpoints de API. Orquestra a busca e preparação do endpoint.
-    *   **`StaticHttpResponseWriter`**: Implementação de `HttpWriter` para servir arquivos estáticos.
-    *   **`ContentTypeNegotiation`**: Classe utilitária (em `output.util`) responsável pela lógica de negociação de `Content-Type` e serialização do corpo da resposta.
-    *   **`ConnectionErrorHandler`**: Centraliza o tratamento de exceções, garantindo que uma resposta de erro (`HttpException`) seja enviada ao cliente.
-
-*   #### `br.com.leonardo.parser`
-    *   **Função:** Análise (parsing) da requisição HTTP bruta.
-    *   **`HttpRequestFactory`**: Atua como uma fachada (Façade) que usa `RequestLineParser`, `RequestHeaderParser` e `RequestBodyParser` para converter a string da requisição em um objeto `HttpRequestData`.
-
-*   #### `br.com.leonardo.router`
-    *   **Função:** O cérebro do framework, responsável pelo roteamento e preparação para a execução.
-    *   **`router.core`**: Contém as entidades centrais do roteamento.
-        *   **`HttpEndpointResolver`**: Serviço que encontra o `HttpEndpoint` que corresponde a uma dada requisição.
-        *   **`HttpEndpoint`**: Classe abstrata que os usuários estendem para criar suas rotas. Contém a lógica de negócio no método `handle` e pode ter uma cadeia de `Middlewares`.
-        *   **`HttpEndpointWrapper`**: Encapsula um `HttpEndpoint` e os dados da requisição. É responsável por executar os `Middlewares` e, em seguida, o método `handle` do endpoint.
-        *   **`HttpEndpointWrapperFactory`**: Classe utilitária que cria um `HttpEndpointWrapper` configurado, usando os `Extractors` no processo.
-        *   **`Middleware`**: Classe abstrata (em `core.middleware`) para a criação de middlewares, que podem ser encadeados para executar lógicas (como autenticação ou logging) antes do `HttpEndpoint`.
-    *   **`router.matcher`**: Contém classes que comparam a URI da requisição com os padrões de rota.
-        *   **`UriMatcher` (Interface)**: Define o contrato para as classes de comparação de URI.
-        *   **`EndpointUriMatcher` (Composite)**: Agrega múltiplos `UriMatcher`s para testar uma URI contra várias estratégias.
-    *   **`router.extractor`**: Contém classes que extraem dados da requisição.
-        *   **`PathVariableExtractor`**: Extrai variáveis do caminho da URI (ex: `/users/{id}`).
-        *   **`QueryParameterExtractor`**: Extrai parâmetros da query string (ex: `?name=leo`).
-        *   **`HeaderExtractor`**: Extrai cabeçalhos da requisição.
-
-*   #### `br.com.leonardo.http`
-    *   **Função:** Contém os modelos de dados que representam os conceitos do protocolo HTTP.
-    *   **`HttpRequest`, `HttpResponse`**: Representam as estruturas fundamentais do HTTP, servindo como a "linguagem" comum usada em todo o framework.
-    *   **`request.map`**: Contém records (`HeaderMap`, `PathVariableMap`, `QueryParameterMap`) que fornecem uma API segura para acessar dados da requisição.
-
-*   #### `br.com.leonardo.annotation`
-    *   **Função:** Definição de anotações e lógica de escaneamento.
-    *   **`@Endpoint`**: Anotação para marcar uma classe como um endpoint HTTP, definindo sua URL, método e `Middlewares`.
-    *   **`EndpointScanner`**: Classe que, na inicialização, varre o classpath em busca de classes com `@Endpoint` e as registra no `HttpEndpointResolver`.
-
-*   #### `br.com.leonardo.config`
-    *   **Função:** Gerencia a configuração da aplicação.
-    *   **`ApplicationProperties`**: Carrega e fornece acesso a propriedades do arquivo `http-server.properties`, permitindo configurar porta, logging, etc.
-
-*   #### `br.com.leonardo.observability`
-    *   **Função:** Lida com aspectos de observabilidade, como logging e tracing.
-    *   **`TraceIdLifeCycleHandler`**: Gerencia um ID de rastreamento (`traceId`) para cada requisição, adicionando-o ao MDC do SLF4J e ao cabeçalho de resposta `X-Trace-Id`.
-    *   **`nodetree`**: Utilitário para logar informações em formato de árvore, usado pelo `EndpointScanner`.
-
-*   #### `br.com.leonardo.enums`
-    *   **Função:** Centraliza as enumerações utilizadas no framework.
-    *   **`HttpMethod`, `HttpStatusCode`, `ContentTypeEnum`**: Enums que representam os conceitos padrão do protocolo HTTP.
-
-*   #### `br.com.leonardo.exception`
-    *   **Função:** Define as exceções customizadas do framework.
-    *   **`HttpException`**: Exceção base para erros de processamento HTTP, que carrega um `HttpStatusCode` e informações para a resposta de erro.
-    *   **`ServerInitializationException`**: Lançada quando ocorre um erro crítico durante a inicialização do servidor.
+*   `br.com.leonardo`
+    *   `annotation`: Define as anotações customizadas e o scanner para processá-las.
+        *   `scanner`: Contém o scanner de anotações.
+            *   **`EndpointScanner`**: Varre o classpath em busca de classes com a anotação `@Endpoint` para registrá-las como rotas.
+        *   **`@Endpoint`**: Anotação para marcar uma classe como um endpoint HTTP, definindo sua URL, método e `Middlewares`.
+    *   `config`: Gerencia a configuração da aplicação.
+        *   **`ApplicationProperties`**: Carrega e fornece acesso a propriedades do arquivo `http-server.properties`.
+        *   **`HighlightingCompositeConverter`**: Componente do Logback para adicionar cores ao log do console.
+    *   `enums`: Centraliza as enumerações utilizadas no framework.
+        *   **`ContentTypeEnum`**: Enum para tipos de conteúdo MIME (ex: `application/json`).
+        *   **`HttpHeaderEnum`**: Enum para nomes de cabeçalhos HTTP padrão.
+        *   **`HttpMethod`**: Enum para os métodos do HTTP (GET, POST, etc.).
+        *   **`HttpStatusCode`**: Enum para os códigos de status HTTP e seus textos.
+        *   **`SupportedStaticContentTypes`**: Enum que mapeia extensões de arquivo para tipos de conteúdo MIME para servir arquivos estáticos.
+    *   `exception`: Define as exceções customizadas do framework.
+        *   **`HttpException`**: Exceção base para erros de processamento HTTP, que carrega um `HttpStatusCode`.
+        *   **`HttpMiddlewareException`**: Subclasse de `HttpException` para erros que ocorrem em `Middlewares`.
+        *   **`ServerInitializationException`**: Lançada quando ocorre um erro crítico durante a inicialização do servidor.
+    *   `http`: Contém os modelos de dados que representam os conceitos do protocolo HTTP.
+        *   `request`: Contém as classes relacionadas à requisição HTTP.
+            *   `map`: Contém records que fornecem uma API segura para acessar dados da requisição.
+                *   **`HeaderMap`**: Wrapper para os cabeçalhos da requisição.
+                *   **`PathVariableMap`**: Wrapper para as variáveis de caminho da URI.
+                *   **`QueryParameterMap`**: Wrapper para os parâmetros da query string.
+            *   **`HttpRequest`**: Record que representa a requisição HTTP recebida, com acesso ao corpo, cabeçalhos e outros dados.
+        *   `response`: Contém as classes relacionadas à resposta HTTP.
+            *   **`HttpResponse`**: Representa a resposta HTTP a ser enviada, incluindo status, cabeçalhos e corpo.
+            *   **`HttpResponseBuilder`**: Builder para construir um objeto `HttpResponse` de forma fluente.
+        *   **`HttpHeader`**: Record que representa um único cabeçalho HTTP (par nome/valor).
+        *   **`RequestLine`**: Record que representa a linha inicial de uma requisição HTTP (método, URI, versão).
+    *   `io`: Camada de Entrada/Saída (I/O), responsável pela comunicação de baixo nível com o cliente.
+        *   `input`: Lida com a leitura da requisição.
+            *   **`HttpRequestReader`**: Lê os dados brutos da requisição a partir do `InputStream` da conexão.
+        *   `output`: Lida com a escrita da resposta.
+            *   `factory`: Contém a fábrica de `HttpWriter`.
+                *   **`HttpWriterFactory`**: Decide qual `HttpWriter` usar (`ApiHttpResponseWriter` ou `StaticHttpResponseWriter`).
+            *   `util`: Utilitários para a escrita da resposta.
+                *   **`ContentTypeNegotiation`**: Lida com a negociação de `Content-Type` e serialização do corpo da resposta.
+            *   **`ApiHttpResponseWriter`**: `HttpWriter` para endpoints de API, que orquestra a busca e execução do endpoint.
+            *   **`HttpWriter`**: Interface que define o contrato para classes que escrevem respostas HTTP.
+            *   **`StaticHttpResponseWriter`**: `HttpWriter` para servir arquivos estáticos.
+        *   **`ConnectionErrorHandler`**: Centraliza o tratamento de exceções para enviar uma resposta de erro formatada.
+        *   **`ConnectionIOHandler`**: Orquestra o ciclo de vida de uma única conexão TCP, desde a leitura até a escrita da resposta.
+    *   `observability`: Lida com aspectos de observabilidade, como logging e tracing.
+        *   `nodetree`: Utilitário para logar informações em formato de árvore.
+            *   **`Node`**: Representa um nó na estrutura de árvore para o log.
+            *   **`TreeNodeLogger`**: Percorre uma estrutura de `Node` e a imprime no log.
+        *   **`TraceIdLifeCycleHandler`**: Gerencia um `traceId` para cada requisição, integrando-o ao log (MDC) e aos cabeçalhos de resposta.
+    *   `parser`: Responsável pela análise (parsing) da requisição HTTP bruta.
+        *   `factory`: Contém a fábrica de `HttpRequest`.
+            *   `model`: Modelo de dados para o parser.
+                *   **`HttpRequestData`**: Record que armazena os dados brutos da requisição após o parsing inicial.
+            *   **`HttpRequestFactory`**: Fachada (Façade) que usa os outros parsers para criar um objeto `HttpRequestData`.
+        *   **`RequestBodyParser`**: Extrai o corpo (body) da requisição bruta.
+        *   **`RequestHeaderParser`**: Extrai os cabeçalhos da requisição bruta.
+        *   **`RequestLineParser`**: Extrai a linha inicial (método, URI, versão) da requisição bruta.
+    *   `router`: O cérebro do framework, responsável pelo roteamento e preparação para a execução.
+        *   `core`: Contém as entidades centrais do roteamento.
+            *   `middleware`: Contém a abstração de `Middleware`.
+                *   **`Middleware`**: Classe abstrata para middlewares, que podem ser encadeados para executar lógicas antes do endpoint.
+            *   **`HttpEndpoint`**: Classe abstrata que os usuários estendem para criar suas rotas (endpoints).
+            *   **`HttpEndpointResolver`**: Serviço que encontra o `HttpEndpoint` que corresponde a uma dada requisição.
+            *   **`HttpEndpointWrapper`**: Encapsula um `HttpEndpoint` e os dados da requisição, executando middlewares e o método `handle`.
+            *   **`HttpEndpointWrapperFactory`**: Classe utilitária que cria um `HttpEndpointWrapper`.
+        *   `extractor`: Contém classes que extraem dados da requisição para uso no endpoint.
+            *   **`HeaderExtractor`**: Extrai cabeçalhos da requisição.
+            *   **`PathVariableExtractor`**: Extrai variáveis do caminho da URI.
+            *   **`QueryParameterExtractor`**: Extrai parâmetros da query string.
+        *   `matcher`: Contém classes que comparam a URI da requisição com os padrões de rota.
+            *   **`EndpointUriMatcher`**: `UriMatcher` composto que agrega múltiplas estratégias de match.
+            *   **`PathVariableUriMatcher`**: Estratégia de match que suporta variáveis de caminho (ex: `/users/{id}`).
+            *   **`QueryParameterUriMatcher`**: Estratégia de match que ignora a query string.
+            *   **`UriMatcher`**: Interface que define o contrato para as classes de comparação de URI.
+    *   `server`: Ponto de entrada e gerenciamento do ciclo de vida do servidor.
+        *   **`Server`**: Gerencia o `ServerSocket` e o pool de threads, aceitando conexões e despachando-as para o `ConnectionIOHandler`.
+        *   **`ServerRunner`**: Contém o método `serve` que o usuário invoca para iniciar toda a aplicação.
