@@ -1,8 +1,8 @@
 package br.com.leonardo.annotation.scanner;
 
 import br.com.leonardo.exception.HttpMiddlewareException;
-import br.com.leonardo.http.middleware.Middleware;
 import br.com.leonardo.http.request.HttpRequest;
+import br.com.leonardo.router.core.middleware.Middleware;
 
 public class Middleware1 extends Middleware {
     @Override

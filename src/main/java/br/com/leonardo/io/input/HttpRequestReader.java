@@ -1,8 +1,8 @@
 package br.com.leonardo.io.input;
 
 import br.com.leonardo.config.ApplicationProperties;
-import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.enums.HttpStatusCode;
+import br.com.leonardo.exception.HttpException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

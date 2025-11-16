@@ -1,10 +1,10 @@
 package br.com.leonardo.router.core;
 
-import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.enums.HttpMethod;
-import br.com.leonardo.http.middleware.Middleware;
+import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.request.HttpRequest;
 import br.com.leonardo.http.response.HttpResponse;
+import br.com.leonardo.router.core.middleware.Middleware;
 import lombok.Getter;
 import lombok.Setter;
 
