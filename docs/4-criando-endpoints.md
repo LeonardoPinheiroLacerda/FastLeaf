@@ -128,11 +128,10 @@ public class SearchEndpoint extends HttpEndpoint<Void, String> {
                                 .build();
                     }
                 }
-                ```
-                
-                ```bash
-                curl -v "http://localhost:8080/search?q=my-query"
-                ```
+```
+```bash
+curl -v "http://localhost:8080/search?q=my-query"
+```
 #### Corpo da Requisição (Body)
 Para endpoints que recebem um corpo (ex: POST, PUT), defina o tipo genérico `I` na sua classe. O framework desserializará o JSON para um objeto desse tipo, que pode ser acessado via `request.body()`.
 
