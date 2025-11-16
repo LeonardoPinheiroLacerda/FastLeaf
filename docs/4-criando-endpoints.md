@@ -54,6 +54,10 @@ public class GetUsersEndpoint extends HttpEndpoint<Void, List<UserDTO>> {
 }
 ```
 
+```bash
+curl -v http://localhost:8080/users
+```
+
 > As classes DTO (classes que serão serializadas para JSON na resposta HTTP) devem conter getters, setters e um construtor sem argumentos, para que dessa forma o framework possa serializar e deserializar os dados.
 
 ### Acessando Dados da Requisição
@@ -89,6 +93,10 @@ public class GetUserByIdEndpoint extends HttpEndpoint<Void, UserDTO> {
 }
 ```
 
+```bash
+curl -v http://localhost:8080/users/123
+```
+
 #### Query Parameters
 Query parameters (ex: `/search?q=my-query`) são acessados através do método `request.queryParameters()`, que retorna um objeto `QueryParameterMap`.
 
@@ -116,13 +124,15 @@ public class SearchEndpoint extends HttpEndpoint<Void, String> {
         return HttpResponse
                 .<String> builder()
                 .statusCode(HttpStatusCode.OK)
-                .body("Você buscou por: " + query)
-                .build();
-    }
-}
-
-```
-
+                                .body("Você buscou por: " + query)
+                                .build();
+                    }
+                }
+                ```
+                
+                ```bash
+                curl -v "http://localhost:8080/search?q=my-query"
+                ```
 #### Corpo da Requisição (Body)
 Para endpoints que recebem um corpo (ex: POST, PUT), defina o tipo genérico `I` na sua classe. O framework desserializará o JSON para um objeto desse tipo, que pode ser acessado via `request.body()`.
 
@@ -162,6 +172,10 @@ public class CreateUserEndpoint extends HttpEndpoint<CreateUserDTO, Void> {
 }
 ```
 
+```bash
+curl -v -X POST -H "Content-Type: application/json" -d '{"name":"Jane Doe"}' http://localhost:8080/users
+```
+
 #### Headers
 Os cabeçalhos da requisição podem ser acessados através do método `request.headers()`, que retorna um objeto `HeaderMap`.
 
@@ -192,6 +206,10 @@ public class EchoUserAgentEndpoint extends HttpEndpoint<Void, String> {
                 .build();
     }
 }
+```
+
+```bash
+curl -v http://localhost:8080/echo-user-agent
 ```
 
 #### Propriedades do Middleware
@@ -232,4 +250,8 @@ public class DownloadReportEndpoint extends HttpEndpoint<Void, String> {
             .build();
     }
 }
+```
+
+```bash
+curl -v http://localhost:8080/download-report
 ```
