@@ -8,7 +8,7 @@ class EndpointScannerTest {
 
     private HttpEndpointResolver resolver = new HttpEndpointResolver();
 
-    private EndpointScanner scanner = new EndpointScanner(resolver);
+    private EndpointScanner scanner = new EndpointScanner();
 
     @Test
     void shouldScanEndpoint() {
