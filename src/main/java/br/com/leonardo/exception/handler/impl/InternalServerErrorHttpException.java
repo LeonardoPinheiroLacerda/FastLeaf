@@ -6,7 +6,7 @@ import br.com.leonardo.exception.handler.model.ProblemDetails;
 import br.com.leonardo.exception.handler.model.StandardError;
 import br.com.leonardo.http.response.HttpResponse;
 
-public class InternalServerErrorHttpExceptionError extends HttpExceptionHandler<Exception, StandardError> {
+public class InternalServerErrorHttpException extends HttpExceptionHandler<Exception, StandardError> {
 
     @Override
     public HttpResponse<StandardError> handle(ProblemDetails problemDetails, Exception exception) {

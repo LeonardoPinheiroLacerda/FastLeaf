@@ -13,7 +13,7 @@ public class HttpMiddlewareHttpExceptionHandler extends HttpExceptionHandler<Htt
         return HttpResponse
                 .<StandardError> builder()
                 .body(new StandardError(
-                        exception.getMessage(),
+                        "(middleware exception)" + exception.getMessage(),
                         problemDetails.getTraceId(),
                         exception.getStatusCode().getCode(),
                         problemDetails.getUri()

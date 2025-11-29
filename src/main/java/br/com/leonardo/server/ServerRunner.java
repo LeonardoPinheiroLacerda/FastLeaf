@@ -33,9 +33,7 @@ public class ServerRunner {
         final HttpEndpointResolver httpEndpointResolver = scanner.scan(clazz);
         final HttpExceptionHandlerResolver httpExceptionHandlerResolver = exceptionScanner.scan(clazz);
 
-        System.out.println(123);
-
-        try (Server server = new Server(httpEndpointResolver)){
+        try (Server server = new Server(httpEndpointResolver, httpExceptionHandlerResolver)){
             server.start();
         } catch (IOException e) {
             throw new ServerInitializationException(e.getMessage());
