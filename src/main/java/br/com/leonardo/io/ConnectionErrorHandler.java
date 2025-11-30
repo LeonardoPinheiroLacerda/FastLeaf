@@ -2,7 +2,7 @@ package br.com.leonardo.io;
 
 import br.com.leonardo.exception.handler.HttpExceptionHandler;
 import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
-import br.com.leonardo.exception.handler.impl.InternalServerErrorHttpException;
+import br.com.leonardo.exception.handler.impl.InternalServerErrorHttpExceptionHandler;
 import br.com.leonardo.exception.handler.model.ProblemDetails;
 import br.com.leonardo.http.request.HttpRequest;
 import br.com.leonardo.http.response.HttpResponse;
@@ -56,7 +56,7 @@ public class ConnectionErrorHandler {
 
         if (httpExceptionHandler == null) {
             log.error("No HttpExceptionHandler found for exception type: {}.", e.getClass().getName());
-            httpExceptionHandler = new InternalServerErrorHttpException();
+            httpExceptionHandler = new InternalServerErrorHttpExceptionHandler();
         }
 
         response = callHttpExceptionHandler(httpExceptionHandler, problemDetails, e);

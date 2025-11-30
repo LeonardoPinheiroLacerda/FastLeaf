@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 
 class EndpointScannerTest {
 
-    private HttpEndpointResolver resolver = new HttpEndpointResolver();
-
-    private EndpointScanner scanner = new EndpointScanner();
+    private final EndpointScanner scanner = new EndpointScanner();
 
     @Test
     void shouldScanEndpoint() {
