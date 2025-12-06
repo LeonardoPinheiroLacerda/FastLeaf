@@ -1,6 +1,5 @@
 package br.com.leonardo.annotation.scanner;
 
-import br.com.leonardo.router.core.HttpEndpointResolver;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -85,8 +85,11 @@ class ExceptionHandlerScannerTest {
             try (MockedStatic<StandardHttpExceptionHandlersFactory> factory = mockStatic(StandardHttpExceptionHandlersFactory.class)) {
                 factory.when(StandardHttpExceptionHandlersFactory::create).thenReturn(Collections.emptySet());
 
+                final Class<? extends ExceptionHandlerScannerTest> clazz = this.getClass();
+
+
                 // When / Then
-                assertThatThrownBy(() -> exceptionHandlerScanner.scan(this.getClass()))
+                assertThatThrownBy(() -> exceptionHandlerScanner.scan(clazz))
                         .isInstanceOf(ServerInitializationException.class)
                         .hasMessage("There is already a handler registered for this exception type: java.lang.IllegalArgumentException");
             }
@@ -159,8 +162,11 @@ class ExceptionHandlerScannerTest {
             try (MockedStatic<StandardHttpExceptionHandlersFactory> factory = mockStatic(StandardHttpExceptionHandlersFactory.class)) {
                 factory.when(StandardHttpExceptionHandlersFactory::create).thenReturn(Collections.emptySet());
 
+
+                final Class<? extends ExceptionHandlerScannerTest> clazz = this.getClass();
+
                 // When / Then
-                assertThatThrownBy(() -> exceptionHandlerScanner.scan(this.getClass()))
+                assertThatThrownBy(() -> exceptionHandlerScanner.scan(clazz))
                         .isInstanceOf(ServerInitializationException.class)
                         .hasMessage("It was not possible to initialize server.")
                         .hasCauseInstanceOf(NoSuchMethodException.class);
