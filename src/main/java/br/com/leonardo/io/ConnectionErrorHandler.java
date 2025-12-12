@@ -1,7 +1,7 @@
 package br.com.leonardo.io;
 
 import br.com.leonardo.exception.handler.HttpExceptionHandler;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.HttpExceptionHandlerResolver;
 import br.com.leonardo.exception.handler.impl.InternalServerErrorHttpExceptionHandler;
 import br.com.leonardo.exception.handler.model.ProblemDetails;
 import br.com.leonardo.http.request.HttpRequest;
@@ -10,7 +10,7 @@ import br.com.leonardo.io.output.HttpWriter;
 import br.com.leonardo.observability.TraceIdLifeCycleHandler;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
 import br.com.leonardo.router.core.HttpEndpoint;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import br.com.leonardo.router.extractor.HeaderExtractor;
 import br.com.leonardo.router.extractor.PathVariableExtractor;
 import br.com.leonardo.router.extractor.QueryParameterExtractor;
@@ -38,7 +38,7 @@ public class ConnectionErrorHandler {
                 .orElse(null);
 
         HttpExceptionHandler<?, ?> httpExceptionHandler = exceptionResolver
-                .get(e.getClass(), true)
+                .getRecursive(e.getClass())
                 .orElse(null);
 
         final HttpRequest<?> request = new HttpRequest<>(

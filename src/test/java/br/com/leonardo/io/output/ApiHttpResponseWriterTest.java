@@ -7,7 +7,7 @@ import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.response.HttpResponse;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
 import br.com.leonardo.router.core.HttpEndpoint;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import br.com.leonardo.router.core.HttpEndpointWrapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

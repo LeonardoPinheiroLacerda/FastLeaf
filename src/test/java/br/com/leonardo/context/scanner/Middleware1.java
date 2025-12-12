@@ -1,4 +1,4 @@
-package br.com.leonardo.annotation.scanner;
+package br.com.leonardo.context.scanner;
 
 import br.com.leonardo.exception.HttpMiddlewareException;
 import br.com.leonardo.http.request.HttpRequest;

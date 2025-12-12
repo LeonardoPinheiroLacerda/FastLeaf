@@ -35,7 +35,7 @@ public class ResourceNotFoundException extends RuntimeException {
 Você pode criar um manipulador para ela:
 
 ```java
-import br.com.leonardo.annotation.ExceptionHandler;
+import br.com.leonardo.context.annotations.ExceptionHandler;
 import br.com.leonardo.exception.handler.HttpExceptionHandler;
 import br.com.leonardo.exception.handler.model.ProblemDetails;
 import br.com.leonardo.http.response.HttpResponse;
@@ -52,9 +52,9 @@ public class ResourceNotFoundExceptionHandler extends HttpExceptionHandler<Resou
                 .<Map<String, String>>builder()
                 .statusCode(HttpStatusCode.NOT_FOUND)
                 .body(Map.of(
-                    "error", "Not Found",
-                    "message", exception.getMessage(),
-                    "traceId", problemDetails.getTraceId()
+                        "error", "Not Found",
+                        "message", exception.getMessage(),
+                        "traceId", problemDetails.getTraceId()
                 ))
                 .build();
     }

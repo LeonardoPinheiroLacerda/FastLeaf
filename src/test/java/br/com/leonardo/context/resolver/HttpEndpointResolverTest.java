@@ -1,9 +1,10 @@
-package br.com.leonardo.router.core;
+package br.com.leonardo.context.resolver;
 
 import br.com.leonardo.enums.HttpMethod;
 import br.com.leonardo.http.HttpHeader;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
+import br.com.leonardo.router.core.HttpEndpoint;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

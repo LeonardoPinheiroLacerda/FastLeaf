@@ -1,7 +1,7 @@
 package br.com.leonardo.io;
 
 import br.com.leonardo.exception.handler.HttpExceptionHandler;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.HttpExceptionHandlerResolver;
 import br.com.leonardo.exception.handler.model.ProblemDetails;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.request.map.HeaderMap;
@@ -12,7 +12,7 @@ import br.com.leonardo.io.output.HttpWriter;
 import br.com.leonardo.observability.TraceIdLifeCycleHandler;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
 import br.com.leonardo.router.core.HttpEndpoint;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import br.com.leonardo.router.extractor.HeaderExtractor;
 import br.com.leonardo.router.extractor.PathVariableExtractor;
 import br.com.leonardo.router.extractor.QueryParameterExtractor;
@@ -94,14 +94,14 @@ class ConnectionErrorHandlerTest {
         final HttpResponse<Object> mockResponse = HttpResponse.builder().statusCode(BAD_REQUEST).body("Error").build();
 
         when(endpointResolver.get(requestData)).thenReturn(Optional.of(httpEndpoint));
-        when(exceptionResolver.get(exception.getClass(), true)).thenReturn(Optional.of(httpExceptionHandler));
+        when(exceptionResolver.getRecursive(exception.getClass())).thenReturn(Optional.of(httpExceptionHandler));
         when(httpExceptionHandler.handle(any(ProblemDetails.class), eq(exception))).thenReturn(mockResponse);
 
         // When
         ConnectionErrorHandler.dispatchException(outputStream, httpWriter, requestData, endpointResolver, exceptionResolver, exception);
 
         // Then
-        verify(exceptionResolver).get(exception.getClass(), true);
+        verify(exceptionResolver).getRecursive(exception.getClass());
         verify(httpExceptionHandler).handle(any(ProblemDetails.class), eq(exception));
         verify(httpWriter).writeResponse(outputStream, mockResponse, requestData.requestLine(), requestData.headers());
     }
@@ -111,7 +111,7 @@ class ConnectionErrorHandlerTest {
         // Given
         final Exception exception = new RuntimeException("Test Exception");
         when(endpointResolver.get(requestData)).thenReturn(Optional.empty());
-        when(exceptionResolver.get(exception.getClass(), true)).thenReturn(Optional.empty());
+        when(exceptionResolver.getRecursive(exception.getClass())).thenReturn(Optional.empty());
 
         // When
         ConnectionErrorHandler.dispatchException(outputStream, httpWriter, requestData, endpointResolver, exceptionResolver, exception);

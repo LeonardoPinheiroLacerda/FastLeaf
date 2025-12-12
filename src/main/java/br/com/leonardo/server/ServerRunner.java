@@ -1,10 +1,12 @@
 package br.com.leonardo.server;
 
-import br.com.leonardo.annotation.scanner.EndpointScanner;
-import br.com.leonardo.annotation.scanner.ExceptionHandlerScanner;
+import br.com.leonardo.context.resolver.ResolversContextHolder;
+import br.com.leonardo.context.scanner.EndpointScanner;
+import br.com.leonardo.context.scanner.ExceptionHandlerScanner;
+import br.com.leonardo.context.scanner.Scanners;
 import br.com.leonardo.exception.ServerInitializationException;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -26,14 +28,9 @@ public class ServerRunner {
 
         log.info("\n{}", BANNER);
 
+        final ResolversContextHolder resolvers = Scanners.scan(clazz);
 
-        EndpointScanner scanner = new EndpointScanner();
-        ExceptionHandlerScanner exceptionScanner = new ExceptionHandlerScanner();
-
-        final HttpEndpointResolver httpEndpointResolver = scanner.scan(clazz);
-        final HttpExceptionHandlerResolver httpExceptionHandlerResolver = exceptionScanner.scan(clazz);
-
-        try (Server server = new Server(httpEndpointResolver, httpExceptionHandlerResolver)){
+        try (Server server = new Server(resolvers)){
             server.start();
         } catch (IOException e) {
             throw new ServerInitializationException(e.getMessage());

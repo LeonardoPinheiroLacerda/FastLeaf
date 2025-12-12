@@ -1,7 +1,8 @@
 package br.com.leonardo.io;
 
 import br.com.leonardo.config.ApplicationProperties;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.ResolversContextHolder;
 import br.com.leonardo.http.HttpHeader;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.http.response.HttpResponse;
@@ -12,7 +13,7 @@ import br.com.leonardo.io.output.util.ContentTypeNegotiation;
 import br.com.leonardo.observability.TraceIdLifeCycleHandler;
 import br.com.leonardo.parser.factory.HttpRequestFactory;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -24,8 +25,7 @@ import java.util.Set;
 @Slf4j
 public record ConnectionIOHandler(
         Socket clientConnection,
-        HttpEndpointResolver resolver,
-        HttpExceptionHandlerResolver exceptionResolver
+        ResolversContextHolder resolvers
 ) implements Runnable {
 
     @Override
@@ -64,7 +64,7 @@ public record ConnectionIOHandler(
         final Set<HttpHeader> headers = requestData.headers();
 
         final ContentTypeNegotiation contentTypeNegotiation = new ContentTypeNegotiation();
-        final HttpWriter httpWriter = HttpWriterFactory.create(contentTypeNegotiation, requestLine, resolver);
+        final HttpWriter httpWriter = HttpWriterFactory.create(contentTypeNegotiation, requestLine, resolvers.getHttpEndpointResolver());
 
         try {
             final HttpResponse<?> response = httpWriter.generateResponse(requestData);
@@ -84,7 +84,7 @@ public record ConnectionIOHandler(
             log.trace("Response written successfully for request: {}", requestLine);
 
         } catch (Exception e) {
-            ConnectionErrorHandler.dispatchException(outputStream, httpWriter, requestData, resolver, exceptionResolver, e);
+            ConnectionErrorHandler.dispatchException(outputStream, httpWriter, requestData, resolvers.getHttpEndpointResolver(), resolvers.getHttpExceptionHandlerResolver(), e);
         }
     }
 

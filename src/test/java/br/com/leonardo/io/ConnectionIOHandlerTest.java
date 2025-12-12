@@ -1,17 +1,18 @@
 package br.com.leonardo.io;
 
 import br.com.leonardo.config.ApplicationProperties;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.ResolversContextHolder;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.io.input.HttpRequestReader;
 import br.com.leonardo.io.output.ApiHttpResponseWriter;
 import br.com.leonardo.io.output.factory.HttpWriterFactory;
 import br.com.leonardo.io.output.util.ContentTypeNegotiation;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -25,11 +26,13 @@ import java.net.Socket;
 @ExtendWith(MockitoExtension.class)
 class ConnectionIOHandlerTest {
 
-    @InjectMocks
     private ConnectionIOHandler underTest;
 
     @Mock
     private Socket clientConnection;
+    
+    @Mock
+    private ResolversContextHolder resolvers;
 
     @Mock
     private HttpEndpointResolver resolver;
@@ -46,6 +49,10 @@ class ConnectionIOHandlerTest {
     @Mock
     private ApiHttpResponseWriter apiHttpResponseWriter;
 
+    @BeforeEach
+    void setUp() {
+        underTest = new ConnectionIOHandler(clientConnection, resolvers);
+    }
 
     @Test
     void shouldRun() throws IOException {
@@ -53,8 +60,12 @@ class ConnectionIOHandlerTest {
         //When
         try(MockedStatic<HttpRequestReader> reader = Mockito.mockStatic(HttpRequestReader.class);
             MockedStatic<HttpWriterFactory> writer = Mockito.mockStatic(HttpWriterFactory.class);
-            MockedStatic<ApplicationProperties> properties = Mockito.mockStatic(ApplicationProperties.class)
+            MockedStatic<ApplicationProperties> properties = Mockito.mockStatic(ApplicationProperties.class);
+            MockedStatic<ConnectionErrorHandler> connectionErrorHandler = Mockito.mockStatic(ConnectionErrorHandler.class)
         ){
+
+            Mockito.when(resolvers.getHttpEndpointResolver()).thenReturn(resolver);
+
             reader
                     .when(() -> HttpRequestReader.readRequest(Mockito.any(InputStream.class)))
                     .thenReturn("GET /api/test HTTP/1.1\r\nHost: localhost\r\n\r\n");
