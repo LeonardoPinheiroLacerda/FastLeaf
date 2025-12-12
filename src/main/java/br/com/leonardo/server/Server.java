@@ -1,9 +1,8 @@
 package br.com.leonardo.server;
 
 import br.com.leonardo.config.ApplicationProperties;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
+import br.com.leonardo.context.resolver.ResolversContextHolder;
 import br.com.leonardo.io.ConnectionIOHandler;
-import br.com.leonardo.router.core.HttpEndpointResolver;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -19,16 +18,14 @@ public class Server implements AutoCloseable {
 
     private final ServerSocket serverSocket;
     private final ExecutorService executorService;
-    private final HttpEndpointResolver resolver;
-    private final HttpExceptionHandlerResolver exceptionResolver;
+    private final ResolversContextHolder resolvers;
 
     private volatile boolean isRunning = true;
 
-    public Server(HttpEndpointResolver resolver, HttpExceptionHandlerResolver exceptionResolver) throws IOException {
+    public Server(ResolversContextHolder resolvers) throws IOException {
         this.serverSocket = new ServerSocket(ApplicationProperties.getPort());
         this.executorService = Executors.newVirtualThreadPerTaskExecutor();
-        this.resolver = resolver;
-        this.exceptionResolver = exceptionResolver;
+        this.resolvers = resolvers;
     }
 
     public void start() {
@@ -39,7 +36,7 @@ public class Server implements AutoCloseable {
             try {
                 Socket client = serverSocket.accept();
                 log.trace("Accepted client from {}", client.getRemoteSocketAddress());
-                executorService.submit(new ConnectionIOHandler(client, resolver, exceptionResolver));
+                executorService.submit(new ConnectionIOHandler(client, resolvers));
                 log.trace("Submitted client IO task for {}", client.getRemoteSocketAddress());
             } catch (SocketException e) {
                 log.error("SocketException while accepting connections", e);

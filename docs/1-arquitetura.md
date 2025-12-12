@@ -2,7 +2,19 @@
 
 O design do framework é baseado em uma clara separação de responsabilidades, com componentes coesos e desacoplados. O núcleo da lógica de roteamento reside no pacote `router`.
 
-### Visão Geral do Fluxo de Requisição
+A inicialização do framework envolve o escaneamento de componentes, e o tratamento de uma requisição passa por camadas bem definidas.                                                                   
+                                                                                                                                                                                                        
+#### Fluxo de Inicialização (Startup)                                                                                                                                                                   
+                                                                                                                                                                                                        
+1.  O método `ServerRunner.serve(ClasseBase.class)` é invocado pelo usuário.
+2.  `Scanners.scan(ClasseBase.class)` é chamado, que por sua vez:
+     a. Cria uma instância do `Reflections` para o pacote da `ClasseBase`.
+     b. Instancia e executa `EndpointScanner` e `ExceptionHandlerScanner`.
+     c. Cada scanner descobre seus respectivos componentes (`@Endpoint`, `@ExceptionHandler`) e popula seu `Resolver` (`HttpEndpointResolver`, `HttpExceptionHandlerResolver`).
+3.  Os `Resolvers` populados são agrupados em um objeto `ResolversContextHolder`.
+4.  Uma instância do `Server` é criada, recebendo o `ResolversContextHolder` que contém todo o contexto da aplicação.
+                                                                                                                                                                                                       
+#### Fluxo de Tratamento de Requisição                                                                                                                                                                  
 
 Uma requisição HTTP passa pelas seguintes camadas principais até gerar uma resposta:
 
@@ -10,14 +22,14 @@ Uma requisição HTTP passa pelas seguintes camadas principais até gerar uma re
 [Requisição TCP]
        |
        v
-+----------------+   1. Aceita a conexão e a entrega para um `ConnectionIOHandler`.
-|     server     |
++----------------+   1. O `Server` aceita a conexão e a entrega para um `ConnectionIOHandler`,
+|     server     |      disponibilizando o `ResolversContextHolder`.
 +----------------+
        |
        v
 +----------------+   2. O `ConnectionIOHandler` orquestra o fluxo: lê a requisição,
 |       io       |      usa o `parser` para decodificá-la, e aciona o `HttpWriter`
-+----------------+      apropriado para gerar e escrever a resposta.
++----------------+      apropriado (usando o `HttpEndpointResolver` do contexto). 
        |
        v
 +----------------+   3. Converte o texto bruto da requisição em um objeto `HttpRequestData`.
@@ -25,9 +37,9 @@ Uma requisição HTTP passa pelas seguintes camadas principais até gerar uma re
 +----------------+
        |
        v
-+----------------+   4. O `ApiHttpResponseWriter` (de `io`) usa o `router`. O `HttpEndpointResolver`
-|     router     |      encontra o endpoint, e o `HttpEndpointWrapperFactory` cria um "wrapper"
-+----------------+      com os dados extraídos, pronto para execução.
++----------------+   4. Se for uma rota de API, o `ApiHttpResponseWriter` usa o `HttpEndpointResolver`  
+|     router     |      para encontrar o endpoint, e o `HttpEndpointWrapperFactory` cria um
++----------------+      "wrapper" com os dados extraídos, pronto para execução. 
        |
        v
 +----------------+   5. O `wrapper` executa a cadeia de `Middlewares` e, em seguida, o método
@@ -43,14 +55,23 @@ Uma requisição HTTP passa pelas seguintes camadas principais até gerar uma re
 A arquitetura da aplicação é organizada na seguinte estrutura de pacotes e classes:
 
 *   `br.com.leonardo`
-    *   `annotation`: Define as anotações customizadas e o scanner para processá-las.
-        *   `scanner`: Contém o scanner de anotações.
-            *   **`EndpointScanner`**: Varre o classpath em busca de classes com a anotação `@Endpoint` para registrá-las como rotas.
-        *   **`@Endpoint`**: Anotação para marcar uma classe como um endpoint HTTP, definindo sua URL, método e `Middlewares`.
-        *   **`@ExceptionHandler`**: Anotação para marcar uma classe como um manipulador de exceções global.
     *   `config`: Gerencia a configuração da aplicação.
         *   **`ApplicationProperties`**: Carrega e fornece acesso a propriedades do arquivo `http-server.properties`.
         *   **`HighlightingCompositeConverter`**: Componente do Logback para adicionar cores ao log do console.
+    *   `context`: Pacote raiz para componentes que gerenciam o ciclo de vida da aplicação, como descoberta de rotas e injeção de dependência.
+        *   `annotations`: Define as anotações customizadas do framework.
+            *   **`@Endpoint`**: Anotação para marcar uma classe como um endpoint HTTP, definindo sua URL, método e `Middlewares`.
+            *   **`@ExceptionHandler`**: Anotação para marcar uma classe como um manipulador de exceções global.
+        *   `resolver`: Contém as classes responsáveis por encontrar e prover componentes registrados.
+            *   **`HttpEndpointResolver`**: Serviço que encontra o `HttpEndpoint` que corresponde a uma dada requisição.
+            *   **`HttpExceptionHandlerResolver`**: Resolve o manipulador de erro apropriado para uma exceção.
+            *   **`Resolver`**: Interface genérica para resolvedores de componentes.
+            *   **`ResolversContextHolder`**: Contêiner que armazena todas as instâncias de `Resolver` descobertas durante a inicialização.
+        *   `scanner`: Contém as classes que varrem o classpath em busca de componentes anotados.
+            *   **`EndpointScanner`**: Varre o classpath em busca de classes com a anotação `@Endpoint` para registrá-las como rotas.
+            *   **`ExceptionHandlerScanner`**: Varre o classpath em busca de classes com a anotação `@ExceptionHandler`.
+            *   **`Scanner`**: Interface genérica para scanners de componentes.
+            *   **`Scanners`**: Classe utilitária que orquestra a execução de todos os `Scanner`s.
     *   `enums`: Centraliza as enumerações utilizadas no framework.
         *   **`ContentTypeEnum`**: Enum para tipos de conteúdo MIME (ex: `application/json`).
         *   **`HttpHeaderEnum`**: Enum para nomes de cabeçalhos HTTP padrão.
@@ -69,7 +90,6 @@ A arquitetura da aplicação é organizada na seguinte estrutura de pacotes e cl
             *   `model`: Modelos de dados para o tratamento de erros.
                 *   **`ProblemDetails`**: Objeto que encapsula os detalhes do erro (RFC 7807).
             *   **`HttpExceptionHandler`**: Interface para criar manipuladores de erro customizados.
-            *   **`HttpExceptionHandlerResolver`**: Resolve o manipulador de erro apropriado para uma exceção.
             *   **`StandardHttpExceptionHandlersFactory`**: Cria os manipuladores de erro padrão.
     *   `http`: Contém os modelos de dados que representam os conceitos do protocolo HTTP.
         *   `request`: Contém as classes relacionadas à requisição HTTP.
@@ -95,7 +115,7 @@ A arquitetura da aplicação é organizada na seguinte estrutura de pacotes e cl
             *   **`HttpWriter`**: Interface que define o contrato para classes que escrevem respostas HTTP.
             *   **`StaticHttpResponseWriter`**: `HttpWriter` para servir arquivos estáticos.
         *   **`ConnectionErrorHandler`**: Centraliza o tratamento de exceções, usando o `HttpExceptionHandlerResolver` para encontrar um handler e gerar uma resposta de erro.
-        *   **`ConnectionIOHandler`**: Orquestra o ciclo de vida de uma única conexão TCP, desde a leitura até a escrita da resposta.
+        *   **`ConnectionIOHandler`**: Orquestra o ciclo de vida de uma única conexão TCP. Ele recebe um `ResolversContextHolder` para ter acesso a todos os resolvedores necessários para processar a requisição.
     *   `observability`: Lida com aspectos de observabilidade, como logging e tracing.
         *   `nodetree`: Utilitário para logar informações em formato de árvore.
             *   **`Node`**: Representa um nó na estrutura de árvore para o log.
@@ -114,7 +134,6 @@ A arquitetura da aplicação é organizada na seguinte estrutura de pacotes e cl
             *   `middleware`: Contém a abstração de `Middleware`.
                 *   **`Middleware`**: Classe abstrata para middlewares, que podem ser encadeados para executar lógicas antes do endpoint.
             *   **`HttpEndpoint`**: Classe abstrata que os usuários estendem para criar suas rotas (endpoints).
-            *   **`HttpEndpointResolver`**: Serviço que encontra o `HttpEndpoint` que corresponde a uma dada requisição.
             *   **`HttpEndpointWrapper`**: Encapsula um `HttpEndpoint` e os dados da requisição, executando middlewares e o método `handle`.
             *   **`HttpEndpointWrapperFactory`**: Classe utilitária que cria um `HttpEndpointWrapper`.
         *   `extractor`: Contém classes que extraem dados da requisição para uso no endpoint.
@@ -127,5 +146,5 @@ A arquitetura da aplicação é organizada na seguinte estrutura de pacotes e cl
             *   **`QueryParameterUriMatcher`**: Estratégia de match que ignora a query string.
             *   **`UriMatcher`**: Interface que define o contrato para as classes de comparação de URI.
     *   `server`: Ponto de entrada e gerenciamento do ciclo de vida do servidor.
-        *   **`Server`**: Gerencia o `ServerSocket` e o pool de threads, aceitando conexões e despachando-as para o `ConnectionIOHandler`.
-        *   **`ServerRunner`**: Contém o método `serve` que o usuário invoca para iniciar toda a aplicação.
+        *   **`Server`**: Gerencia o `ServerSocket` e o pool de threads, aceitando conexões e despachando-as para o `ConnectionIOHandler`. Recebe um `ResolversContextHolder` com todos os resolvedores da aplicação.
+        *   **`ServerRunner`**: Contém o método `serve` que o usuário invoca para iniciar toda a aplicação. Ele orquestra a varredura de componentes usando a classe `Scanners` e inicializa o `Server`.

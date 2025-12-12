@@ -1,11 +1,11 @@
-package br.com.leonardo.annotation.scanner;
+package br.com.leonardo.context.scanner;
 
-import br.com.leonardo.annotation.Endpoint;
+import br.com.leonardo.context.annotations.Endpoint;
+import br.com.leonardo.context.resolver.HttpEndpointResolver;
 import br.com.leonardo.exception.ServerInitializationException;
 import br.com.leonardo.observability.nodetree.Node;
 import br.com.leonardo.observability.nodetree.TreeNodeLogger;
 import br.com.leonardo.router.core.HttpEndpoint;
-import br.com.leonardo.router.core.HttpEndpointResolver;
 import br.com.leonardo.router.core.middleware.Middleware;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
@@ -13,17 +13,14 @@ import org.reflections.Reflections;
 import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
-public class EndpointScanner {
+public class EndpointScanner implements Scanner<HttpEndpointResolver>{
 
-    public HttpEndpointResolver scan(Class<?> clazz) {
+    public HttpEndpointResolver scan(Reflections reflections) {
 
         final HttpEndpointResolver resolver = new HttpEndpointResolver();
 
-        final String pack = clazz.getPackage().getName();
-        final Reflections reflections = new Reflections(pack);
-
         log.info("Scanning project");
-        final Node root = new Node("Scanning package " + pack);
+        final Node root = new Node("Scanning package");
 
         reflections
                 .getTypesAnnotatedWith(Endpoint.class)

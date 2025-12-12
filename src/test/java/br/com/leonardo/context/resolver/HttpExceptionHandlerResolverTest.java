@@ -1,5 +1,6 @@
-package br.com.leonardo.exception.handler;
+package br.com.leonardo.context.resolver;
 
+import br.com.leonardo.exception.handler.HttpExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +38,7 @@ class HttpExceptionHandlerResolverTest {
         resolver.add(illegalArgumentHandler);
 
         // When
-        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(IllegalArgumentException.class, false);
+        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(IllegalArgumentException.class);
 
         // Then
         assertThat(foundHandler).isPresent().contains(illegalArgumentHandler);
@@ -48,7 +49,7 @@ class HttpExceptionHandlerResolverTest {
         // Given
         doReturn(IllegalArgumentException.class).when(illegalArgumentHandler).resolveThrowbleType();
         resolver.add(illegalArgumentHandler);
-        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(NullPointerException.class, false);
+        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(NullPointerException.class);
 
         // Then
         assertThat(foundHandler).isNotPresent();
@@ -62,7 +63,7 @@ class HttpExceptionHandlerResolverTest {
 
         // When
         // NullPointerException extends RuntimeException
-        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(NullPointerException.class, true);
+        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.getRecursive(NullPointerException.class);
 
         // Then
         assertThat(foundHandler).isPresent().contains(runtimeHandler);
@@ -75,7 +76,7 @@ class HttpExceptionHandlerResolverTest {
         resolver.add(illegalArgumentHandler); // Handles a subclass of RuntimeException
 
         // When
-        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(RuntimeException.class, true);
+        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.getRecursive(RuntimeException.class);
 
         // Then
         assertThat(foundHandler).isNotPresent();
@@ -88,7 +89,7 @@ class HttpExceptionHandlerResolverTest {
         resolver.add(ioHandler); // Handles a checked exception
 
         // When
-        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(NullPointerException.class, true);
+        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.getRecursive(NullPointerException.class);
 
         // Then
         assertThat(foundHandler).isNotPresent();
@@ -105,7 +106,7 @@ class HttpExceptionHandlerResolverTest {
         resolver.add(runtimeHandler); // More specific
 
         // When
-        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.get(NullPointerException.class, true);
+        Optional<HttpExceptionHandler<?, ?>> foundHandler = resolver.getRecursive(NullPointerException.class);
 
         // Then
         assertThat(foundHandler).isPresent().contains(runtimeHandler);

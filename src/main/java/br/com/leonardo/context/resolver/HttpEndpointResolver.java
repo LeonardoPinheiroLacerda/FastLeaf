@@ -1,8 +1,9 @@
-package br.com.leonardo.router.core;
+package br.com.leonardo.context.resolver;
 
 import br.com.leonardo.enums.HttpMethod;
 import br.com.leonardo.http.RequestLine;
 import br.com.leonardo.parser.factory.model.HttpRequestData;
+import br.com.leonardo.router.core.HttpEndpoint;
 import br.com.leonardo.router.matcher.EndpointUriMatcher;
 import br.com.leonardo.router.matcher.PathVariableUriMatcher;
 import br.com.leonardo.router.matcher.QueryParameterUriMatcher;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HttpEndpointResolver {
+public class HttpEndpointResolver implements Resolver<HttpEndpoint<?, ?>, HttpRequestData> {
 
     private final Map<HttpMethod, Set<HttpEndpoint<?, ?>>> endpointMap = new ConcurrentHashMap<>();
     private final UriMatcher endpointUriMatcher = new EndpointUriMatcher(

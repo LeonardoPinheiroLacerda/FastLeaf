@@ -1,4 +1,4 @@
-package br.com.leonardo.annotation;
+package br.com.leonardo.context.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

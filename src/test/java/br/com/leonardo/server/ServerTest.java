@@ -1,7 +1,6 @@
 package br.com.leonardo.server;
 
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
-import br.com.leonardo.router.core.HttpEndpointResolver;
+import br.com.leonardo.context.resolver.ResolversContextHolder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,8 +22,7 @@ class ServerTest {
     private Server server;
 
     @Mock
-    private HttpEndpointResolver resolver;
-    private HttpExceptionHandlerResolver exceptionResolver;
+    private ResolversContextHolder resolversContextHolder;
 
     @Test
     void shouldConstructServer() throws Exception {
@@ -34,7 +32,7 @@ class ServerTest {
                 MockedStatic<Runtime> runtime = Mockito.mockStatic(Runtime.class)
         ) {
             //When
-            server = new Server(resolver, exceptionResolver);
+            server = new Server(resolversContextHolder);
 
             //Then
             Assertions
@@ -51,7 +49,7 @@ class ServerTest {
                 MockedStatic<Runtime> runtime = Mockito.mockStatic(Runtime.class)
         ) {
             //When
-            server = new Server(resolver, exceptionResolver);
+            server = new Server(resolversContextHolder);
 
             Runtime runtimeMock = Mockito
                     .mock(Runtime.class);
@@ -82,7 +80,7 @@ class ServerTest {
                 MockedStatic<Runtime> runtime = Mockito.mockStatic(Runtime.class)
         ) {
             //When
-            server = new Server(resolver, exceptionResolver);
+            server = new Server(resolversContextHolder);
 
             Runtime runtimeMock = Mockito
                     .mock(Runtime.class);
@@ -113,7 +111,7 @@ class ServerTest {
                 MockedStatic<Runtime> runtime = Mockito.mockStatic(Runtime.class)
         ) {
             //When
-            server = new Server(resolver, exceptionResolver);
+            server = new Server(resolversContextHolder);
             server.close();
 
             //Then

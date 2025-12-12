@@ -1,4 +1,4 @@
-package br.com.leonardo.annotation;
+package br.com.leonardo.context.annotations;
 
 import br.com.leonardo.enums.HttpMethod;
 import br.com.leonardo.router.core.middleware.Middleware;

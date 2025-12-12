@@ -1,6 +1,6 @@
-package br.com.leonardo.annotation.scanner;
+package br.com.leonardo.context.scanner;
 
-import br.com.leonardo.annotation.Endpoint;
+import br.com.leonardo.context.annotations.Endpoint;
 import br.com.leonardo.enums.HttpMethod;
 import br.com.leonardo.exception.HttpException;
 import br.com.leonardo.http.request.HttpRequest;

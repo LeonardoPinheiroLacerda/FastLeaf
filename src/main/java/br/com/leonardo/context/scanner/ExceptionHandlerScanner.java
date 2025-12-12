@@ -1,9 +1,9 @@
-package br.com.leonardo.annotation.scanner;
+package br.com.leonardo.context.scanner;
 
-import br.com.leonardo.annotation.ExceptionHandler;
+import br.com.leonardo.context.annotations.ExceptionHandler;
+import br.com.leonardo.context.resolver.HttpExceptionHandlerResolver;
 import br.com.leonardo.exception.ServerInitializationException;
 import br.com.leonardo.exception.handler.HttpExceptionHandler;
-import br.com.leonardo.exception.handler.HttpExceptionHandlerResolver;
 import br.com.leonardo.exception.handler.StandardHttpExceptionHandlersFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
@@ -13,14 +13,11 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-public class ExceptionHandlerScanner {
+public class ExceptionHandlerScanner implements Scanner<HttpExceptionHandlerResolver>{
 
-    public HttpExceptionHandlerResolver scan(Class<?> clazz) {
+    public HttpExceptionHandlerResolver scan(Reflections reflections) {
 
         final HttpExceptionHandlerResolver resolver = new HttpExceptionHandlerResolver();
-
-        final String pack = clazz.getPackage().getName();
-        final Reflections reflections = new Reflections(pack);
 
         final Set<Class<?>> types = reflections
                 .getTypesAnnotatedWith(ExceptionHandler.class);
@@ -32,7 +29,7 @@ public class ExceptionHandlerScanner {
                                 .getDeclaredConstructor()
                                 .newInstance();
 
-                if(resolver.get(httpExceptionHandler.resolveThrowbleType(), false).isPresent()) {
+                if(resolver.get(httpExceptionHandler.resolveThrowbleType()).isPresent()) {
                     log.error("There is already a handler registered for this exception type: {}", httpExceptionHandler.resolveThrowbleType().getName());
                     throw new ServerInitializationException("There is already a handler registered for this exception type: " + httpExceptionHandler.resolveThrowbleType().getName());
                 }
@@ -48,7 +45,7 @@ public class ExceptionHandlerScanner {
         StandardHttpExceptionHandlersFactory
                 .create()
                 .forEach(handler -> {
-                    final Optional<HttpExceptionHandler<?, ?>> exceptionHandler = resolver.get(handler.resolveThrowbleType(), false);
+                    final Optional<HttpExceptionHandler<?, ?>> exceptionHandler = resolver.get(handler.resolveThrowbleType());
                     if(exceptionHandler.isEmpty()) {
                         resolver.add(handler);
                     }
